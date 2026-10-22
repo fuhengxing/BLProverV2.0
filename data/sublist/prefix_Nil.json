@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_Nil",
+  "function names": ["prefix"],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_Nil [simp]: \"(prefix xs []) = (xs = [])\""
+}
+
+

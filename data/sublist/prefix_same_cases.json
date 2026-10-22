@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_same_cases",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_same_cases:\n  \"prefix (xs\\<^sub>1::'a list) ys \\<Longrightarrow> prefix xs\\<^sub>2 ys \\<Longrightarrow> prefix xs\\<^sub>1 xs\\<^sub>2 \\<or> prefix xs\\<^sub>2 xs\\<^sub>1\""
+}

@@ -1,0 +1,13 @@
+{
+	"packages": "Main",
+	"theorem name": "top_equals_pop_first",
+	"function names": ["isempty","top","pop"],
+	"other formal": "\ntypedef (overloaded) 'a bstack =\n \"{xs :: ('a list \\<times> nat). length (fst xs) \\<le> snd xs}\"\n morphisms alist_of Abs_bstack\nproof -\n have \"([],0) \\<in> {xs. length (fst xs) \\<le> snd xs}\" by simp\n thus ?thesis by blast\nqed",
+	"other rules": ["alist_of_inverse", "alist_of", "Abs_bstack_inverse", "Abs_bstack_inject"],
+	"formal function definitions": {
+		"isempty":"definition isempty :: \"'a bstack \\<Rightarrow> bool\"\nwhere \"isempty s \\<equiv> fst (alist_of s) = []\"",
+		"top":"definition top :: \"'a bstack \\<Rightarrow> 'a option\"\nwhere \"top s \\<equiv> (if \\<not> isempty s then \n (Some (hd (fst (alist_of s)))) \n else None)\"",
+		"pop":"definition pop :: \"'a bstack \\<Rightarrow> ('a option \\<times> 'a bstack)\"\nwhere \"pop s \\<equiv> \n(if \\<not> isempty s then \n (Some (hd (fst (alist_of s))), Abs_bstack (tl (fst (alist_of s)), snd (alist_of s))) \n else (None, s))\""
+	},
+	"formal theorem statement": "theorem top_equals_pop_first :\n  assumes a1:\"\\<not> isempty s\"\n  shows \"top s = fst (pop s)\""
+}

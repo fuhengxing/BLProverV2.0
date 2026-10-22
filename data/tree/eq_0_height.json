@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "eq_0_height",
+  "function names": [
+    "height"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\""
+  },
+  "formal theorem statement": "theorem eq_0_height[simp]: \"(0::nat) = height t ⟷ t = Leaf\""
+}

@@ -1,0 +1,15 @@
+{
+    "packages": "Main",
+    "theorem name": "pop_return_min",
+    "function names": ["is_empty","empty","min","remove_min","pop"],
+    "other formal": "typedef (overloaded) ('a, 'b::linorder) pri_queue =\n  \"{xs :: ('a \\<times> 'b) list. distinct (map fst xs) \\<and> sorted (map snd xs)}\"\n  morphisms alist_of Abs_pq\nproof -\n  have \"[] \\<in> ?pri_queue\" by simp\n  then show ?thesis by blast\nqed \n",
+    "other rules": ["alist_of_inverse", "alist_of", "Abs_pq_inverse", "Abs_pq_inject"],
+    "formal function definitions": {
+      "is_empty": "definition is_empty :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> bool\" where\n  \"is_empty q \\<equiv> alist_of q = []\"",
+      "min": "definition min :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> 'a\" where\n  \"min q \\<equiv> fst (hd (alist_of q))\"",
+      "empty": "definition empty :: \"('a, 'b::linorder) pri_queue\" where \n  \"empty \\<equiv> Abs_pq []\"",
+      "remove_min": "definition remove_min :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> ('a, 'b::linorder) pri_queue\" where\n  \"remove_min q \\<equiv> (if is_empty q then empty else Abs_pq (tl (alist_of q)))\"",
+      "pop": "definition pop :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> ('a \\<times> ('a, 'b) pri_queue) option\" where\n  \"pop q = (if is_empty q then None else Some (min q, remove_min q))\""
+    },
+    "formal theorem statement": "theorem pop_return_min:assumes a1:\"pop q = Some (v, q1)\"\n  shows \"v = min q\""
+}

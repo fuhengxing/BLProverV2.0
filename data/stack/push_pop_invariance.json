@@ -1,0 +1,12 @@
+{
+	"packages":"Main",
+	"theorem name":"push_pop_invariance",
+	"function names":["push","pop"],
+	"other formal":"type_synonym 'a stack = \"'a list\"",
+	"other rules": [],
+	"formal function definitions":{
+		"push":"definition push :: \"'a \\<Rightarrow> 'a stack \\<Rightarrow> 'a stack\" \n where \"push v s = v#s\"",
+		"pop":"primrec pop :: \"'a stack \\<Rightarrow> ('a \\<times> 'a stack)\"\n where \"pop (x # xs) = (x, xs)\""
+	},
+	"formal theorem statement":"theorem push_pop_invariance:\"pop (push v s) = (v, s)\""
+}

@@ -1,0 +1,16 @@
+{
+  "packages": "Main",
+  "theorem name": "queue_cor",
+  "function names": ["dequeue","enqueue","deq2list","listenq","dequeue_list","list_enqueue"],
+  "other formal": "\ntype_synonym 'a queue = \"'a list\"\n",
+  "other rules": ["deq2list.induct", "listenq.induct"],
+  "formal function definitions": {
+    "dequeue_list":"definition \"dequeue_list q \\<equiv> deq2list q []\"",
+    "list_enqueue": "definition \"list_enqueue l \\<equiv> listenq [] l\"",
+    "deq2list": "fun deq2list :: \"'a queue \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\n  \"deq2list [] lst = lst\"|\n  \"deq2list q lst = \n      (let (x, xq) = dequeue(q) in \n        (deq2list xq (x # lst)))\"",
+    "dequeue": "fun dequeue :: \"'a queue \\<Rightarrow> ('a \\<times> 'a queue)\" \nwhere \"dequeue xs = (last xs, butlast xs)\"",
+    "listenq": "fun listenq :: \"'a queue \\<Rightarrow> 'a list \\<Rightarrow> 'a queue\" where\n  \"listenq q [] = q\" |\n  \"listenq q (x # xs) = listenq (enqueue q x) xs\"",
+    "enqueue": "fun enqueue :: \"'a queue \\<Rightarrow> 'a \\<Rightarrow> 'a queue\" \nwhere \"enqueue xs x = x # xs\""
+  },
+  "formal theorem statement": "theorem queue_cor: \"dequeue_list (list_enqueue xs) = rev xs\""
+}

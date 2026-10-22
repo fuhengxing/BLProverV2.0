@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_code",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_code [code]:\n  \"prefix [] xs \\<longleftrightarrow> True\"\n  \"prefix (x # xs) [] \\<longleftrightarrow> False\"\n  \"prefix (x # xs) (y # ys) \\<longleftrightarrow> x = y \\<and> prefix xs ys\""
+}

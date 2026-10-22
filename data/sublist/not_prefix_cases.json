@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "not_prefix_cases",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem not_prefix_cases:\n  assumes pfx: \"\\<not> prefix ps ls\"\n  obtains\n    (c1) \"ps \\<noteq> []\" and \"ls = []\"\n  | (c2) a as x xs where \"ps = a#as\" and \"ls = x#xs\" and \"x = a\" and \"\\<not> prefix as xs\"\n  | (c3) a as x xs where \"ps = a#as\" and \"ls = x#xs\" and \"x \\<noteq> a\""
+}

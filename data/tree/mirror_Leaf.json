@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "mirror_Leaf",
+  "function names": [
+    "mirror"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "mirror": "fun mirror :: \"'a tree ⇒ 'a tree\" where\n  \"mirror Leaf = Leaf\" |\n  \"mirror (Node (l) (x) (r)) = (Node (mirror r) (x) (mirror l))\""
+  },
+  "formal theorem statement": "theorem mirror_Leaf[simp]: \"mirror t = Leaf ⟷ t = Leaf\""
+}

@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "height_subtrees",
+  "function names": [
+    "height",
+    "subtrees"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\"",
+    "subtrees": "fun subtrees :: \"'a tree ⇒ 'a tree set\" where\n  \"subtrees Leaf = {Leaf}\" |\n  \"subtrees (Node l a r) = {Node l a r} ∪ subtrees l ∪ subtrees r\""
+  },
+  "formal theorem statement": "theorem height_subtrees: \"s ∈ subtrees t ⟹ height s ≤ height t\""
+}

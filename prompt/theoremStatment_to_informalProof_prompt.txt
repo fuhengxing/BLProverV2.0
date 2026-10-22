@@ -1,0 +1,51 @@
+#Role
+You are a rigorous mathematician and expert Isabelle/HOL formalization engineer.
+#Task
+Analyze the given theorem(including the problem’s function definition,and formal statement).Provide a better structured step-by-step informal proof.
+#Requirement
+The content you entered must be placed inside {{your outputs}}.You can refer to the output format of the example
+#Below are examples(few-shot)
+## Function definitions
+{{
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a × 'b) list. distinct (map fst xs) ∧ sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] ∈ ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+definition "values" :: "('a, 'b::linorder) pri_queue ⇒ 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+definition is_empty :: "('a, 'b::linorder) pri_queue ⇒ bool" where
+  "is_empty q ≡ alist_of q = []"
+definition priority :: "('a, 'b::linorder) pri_queue ⇒ 'a ⇒ 'b option" where
+  "priority q ≡ map_of (alist_of q)"
+definition min :: "('a, 'b::linorder) pri_queue ⇒ 'a" where
+  "min q ≡ fst (hd (alist_of q))"
+definition empty :: "('a, 'b::linorder) pri_queue" where 
+  "empty ≡ Abs_pq []"
+}}
+## Theorem statement
+{{
+```isabelle
+theorem min_priority_leq_all: assumes a1:"\<not> is_empty q" and a2:"v \<in> set |q|"        
+ shows "the (priority q (min q)) \<le> the (priority q v)"
+```
+}}
+## Informal proof 
+{{
+    To prove the theorem min_priority_leq_all, we proceed step by step, ensuring each reasoning step is small and precise.
+Step 1: Unfold the internal representation Let L = alist_of q. From assumption ¬ is_empty q and the definition is_empty q ≡ (alist_of q = []), we directly obtain L ≠ [].
+Step 2: Express the minimum element and its priority Because L ≠ [], its head is defined. Write (m, p_min) = hd L. By the definition min q ≡ fst (hd (alist_of q)), we have min q = m. Since the pair (m, p_min) belongs to set L (by the fact that the head of a non‑empty list is in the list), and L satisfies the invariant distinct (map fst L), the function map_of L maps each key to at most one value. Thus priority q m = map_of L m = Some p_min.
+Step 3: Characterise an arbitrary value v present in the queue The assumption v ∈ set |q| together with values q = map fst (alist_of q) yields v ∈ set (map fst L). Hence there exists a pair (v, p_v) ∈ set L. By the distinctness of keys in L (the type invariant), this pair is unique for the key v. Consequently priority q v = map_of L v = Some p_v.
+Step 4: Exploit the sortedness invariant The type invariant of pri_queue guarantees that sorted (map snd L) holds, i.e. the list L is sorted in non‑decreasing order of priorities. For a non‑empty list sorted by a projection f, the head gives the minimal f value among all elements. More precisely: ∀ (a,b) ∈ set L. snd (hd L) ≤ b. Applying this to the pair (v, p_v) ∈ set L we obtain p_min ≤ p_v.
+Step 5: Translate the obtained inequalities to the the-expressions From Step 2 we have priority q (min q) = Some p_min, therefore the (priority q (min q)) = p_min. From Step 3 we have priority q v = Some p_v, therefore the (priority q v) = p_v. Step 4 establishes p_min ≤ p_v.
+Step 6: Conclude the desired inequality Combining the equalities of Step 5 with the inequality of Step 4 gives exactly the theorem’s statement: the (priority q (min q)) ≤ the (priority q v).
+}}
+####below are your task(based on Function definitions,Theorem statement,Provide a better structured step-by-step informal proof)
+### Function  definitions
+{{user provide}}
+### Theorem statement
+{{user provide}}
+### Informal proof
+{{your outputs}}

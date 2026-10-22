@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "min_height_map_tree",
+  "function names": [
+    "min_height",
+    "map_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "min_height": "fun min_height :: \"'a tree ⇒ nat\" where\n  \"min_height Leaf = 0\" |\n  \"min_height (Node l _ r) = min (min_height l) (min_height r) + 1\"",
+    "map_tree": "primrec map_tree :: \"('a ⇒ 'b) ⇒ 'a tree ⇒ 'b tree\" where\n  \"map_tree f Leaf = Leaf\" |\n  \"map_tree f (Node l x r) = (Node (map_tree f l) (f x) (map_tree f r))\""
+  },
+  "formal theorem statement": "theorem min_height_map_tree[simp]: \"min_height (map_tree f t) = min_height t\""
+}

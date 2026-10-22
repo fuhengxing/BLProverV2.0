@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "eq_Leaf_map_tree",
+  "function names": [
+    "map_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "map_tree": "primrec map_tree :: \"('a \\<Rightarrow> 'b) \\<Rightarrow> 'a tree \\<Rightarrow> 'b tree\" where\n  \"map_tree f Leaf = Leaf\" |\n  \"map_tree f (Node l v r) = (Node (map_tree f l) (f v) (map_tree f r))\""
+  },
+  "formal theorem statement": "theorem eq_Leaf_map_tree[simp]: \"Leaf = map_tree f t \\<longleftrightarrow> t = Leaf\""
+}

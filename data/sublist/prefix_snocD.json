@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_snocD",
+  "function names": [
+    "prefix",
+    "strict_prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\"",
+    "strict_prefix": "definition strict_prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"strict_prefix xs ys \\<longleftrightarrow> prefix xs ys \\<and> xs \\<noteq> ys\""
+  },
+  "formal theorem statement": "theorem prefix_snocD: \"prefix (xs@[x]) ys \\<Longrightarrow> strict_prefix xs ys\""
+}

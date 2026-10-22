@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "bst_wrt_le_if_bst",
+  "function names": [
+    "bst",
+    "bst_wrt"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"\nabbreviation bst :: \"('a::linorder) tree ⇒ bool\" where \"bst ≡ bst_wrt (<)\"",
+  "other rules": [],
+  "formal function definitions": {
+    "bst_wrt": "fun bst_wrt :: \"('a ⇒ 'a ⇒ bool) ⇒ 'a tree ⇒ bool\" where\n  \"bst_wrt P Leaf ⟷ True\" |\n  \"bst_wrt P (Node (l) (a) (r)) ⟷ (∀x∈set_tree l. P x a) ∧ (∀x∈set_tree r. P a x) ∧ bst_wrt P l ∧ bst_wrt P r\"",
+    "set_tree": "fun set_tree :: \"'a tree ⇒ 'a set\" where\n  \"set_tree Leaf = {}\" |\n  \"set_tree (Node l a r) = {a} ∪ set_tree l ∪ set_tree r\""
+  },
+  "formal theorem statement": "theorem bst_wrt_le_if_bst: \"bst t ⟹ bst_wrt (≤) t\""
+}

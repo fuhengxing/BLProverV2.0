@@ -1,0 +1,16 @@
+{
+  "packages": "Main",
+  "theorem name": "bst_wrt_le_iff_sorted",
+  "function names": [
+    "bst_wrt",
+    "inorder"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "inorder": "fun inorder :: \"'a tree ⇒ 'a list\" where\n  \"inorder Leaf = []\" |\n  \"inorder (Node (l) (x) (r)) = inorder l @ [x] @ inorder r\"",
+    "bst_wrt": "fun bst_wrt :: \"('a ⇒ 'a ⇒ bool) ⇒ 'a tree ⇒ bool\" where\n  \"bst_wrt P Leaf ⟷ True\" |\n  \"bst_wrt P (Node (l) (a) (r)) ⟷ (∀x∈set_tree l. P x a) ∧ (∀x∈set_tree r. P a x) ∧ bst_wrt P l ∧ bst_wrt P r\"",
+    "set_tree": "fun set_tree :: \"'a tree ⇒ 'a set\" where\n  \"set_tree Leaf = {}\" |\n  \"set_tree (Node l a r) = {a} ∪ set_tree l ∪ set_tree r\""
+  },
+  "formal theorem statement": "theorem bst_wrt_le_iff_sorted:\n  \"bst_wrt (≤) t ⟷ sorted (inorder t)\""
+}

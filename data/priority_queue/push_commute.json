@@ -1,0 +1,13 @@
+{
+    "packages": "Main",
+    "theorem name": "push_commute",
+    "function names": ["values","push"],
+    "other formal": "typedef (overloaded) ('a, 'b::linorder) pri_queue =\n  \"{xs :: ('a \\<times> 'b) list. distinct (map fst xs) \\<and> sorted (map snd xs)}\"\n  morphisms alist_of Abs_pq\nproof -\n  have \"[] \\<in> ?pri_queue\" by simp\n  then show ?thesis by blast\nqed \n",
+    "other rules": ["alist_of_inverse", "alist_of", "Abs_pq_inverse", "Abs_pq_inject"],
+    "formal function definitions": {
+      "values": "definition \"values\" :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> 'a list\" (\"|(_)|\") where\n  \"values q = map fst (alist_of q)\"",
+      "push": "definition push :: \"'a \\<Rightarrow> 'b::linorder \\<Rightarrow> ('a, 'b) pri_queue \\<Rightarrow> ('a, 'b) pri_queue\" where\n  \"push k p q \\<equiv> Abs_pq (if k \\<notin> set (values q)\n           then insort_key snd (k, p) (alist_of q)\n           else alist_of q)\""
+    },
+    "informal theorem statetment": "This lemma expresses a commutativity property of the `push` operation. It asserts nthat pushing two elements onto a priority queue, one after the other, is equivalent \nregardless of the order in which the pushes are performed.\n\nExplanation:\n`push w b (push v a q)`: This represents pushing the element with key `w` \nand priority `b` onto the priority queue obtained by pushing the element with \nkey `v` and priority `a` onto the original priority queue `q`.\n`push v a (push w b q)`: This represents pushing the element with key `v` \nand priority `a` onto the priority queue obtained by pushing the element with \nkey `w` and priority `b` onto the original priority queue `q`.\nThe lemma asserts that these two operations result in the same priority queue.",
+    "formal theorem statement": "theorem push_commute:\n  assumes a1:\"a \\<noteq> b\" and a2: \"v \\<noteq> w\"\n  shows \"push w b (push v a q) = push v a (push w b q)\""
+}

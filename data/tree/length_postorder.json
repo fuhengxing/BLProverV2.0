@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "length_postorder",
+  "function names": [
+    "postorder",
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "postorder": "fun postorder :: \"'a tree ⇒ 'a list\" where \"postorder Leaf = []\" | \"postorder (Node (l) (x) (r)) = postorder l @ postorder r @ [x]\"",
+    "size": "primrec size :: \"'a tree ⇒ nat\" where \"size Leaf = 0\" | \"size (Node l x r) = size l + size r + 1\""
+  },
+  "formal theorem statement": "theorem length_postorder[simp]: \"length (postorder t) = size t\""
+}

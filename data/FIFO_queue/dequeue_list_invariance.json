@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "dequeue_list_invariance",
+  "function names": ["dequeue","deq2list","dequeue_list"],
+  "other formal": "\ntype_synonym 'a queue = \"'a list\"\n",
+  "other rules": ["deq2list.induct"],
+  "formal function definitions": {
+    "dequeue": "fun dequeue :: \"'a queue \\<Rightarrow> ('a \\<times> 'a queue)\" \nwhere \"dequeue xs = (last xs, butlast xs)\"",
+    "deq2list": "fun deq2list :: \"'a queue \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\n  \"deq2list [] lst = lst\"|\n  \"deq2list q lst = \n      (let (x, xq) = dequeue(q) in \n        (deq2list xq (x # lst)))\"",
+    "dequeue_list": "definition \"dequeue_list q \\<equiv> deq2list q []\""
+  },
+  "formal theorem statement": "theorem dequeue_list_invariance: \"dequeue_list q = q\""
+}

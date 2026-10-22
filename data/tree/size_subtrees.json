@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "size_subtrees",
+  "function names": [
+    "subtrees",
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "subtrees": "fun subtrees :: \"'a tree \\<Rightarrow> 'a tree set\" where\n  \"subtrees Leaf = {Leaf}\" |\n  \"subtrees (Node l a r) = {Node l a r} \\<union> subtrees l \\<union> subtrees r\"",
+    "size": "primrec size :: \"'a tree \\<Rightarrow> nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\""
+  },
+  "formal theorem statement": "theorem size_subtrees: \"s \\<in> subtrees t \\<Longrightarrow> size s \\<le> size t\""
+}

@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "set_preorder",
+  "function names": [
+    "preorder",
+    "set_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "preorder": "fun preorder :: \"'a tree ⇒ 'a list\" where \"preorder Leaf = []\" | \"preorder (Node (l) (x) (r)) = x # preorder l @ preorder r\"",
+    "set_tree": "fun set_tree :: \"'a tree ⇒ 'a set\" where \"set_tree Leaf = {}\" | \"set_tree (Node l a r) = {a} ∪ set_tree l ∪ set_tree r\""
+  },
+  "formal theorem statement": "theorem set_preorder[simp]: \"set (preorder t) = set_tree t\""
+}

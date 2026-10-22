@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_map_rightE",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_map_rightE:\n  assumes \"prefix xs (map f ys)\"\n  shows \"\\<exists>xs'. prefix xs' ys \\<and> xs = map f xs'\""
+}

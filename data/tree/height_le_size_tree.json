@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "height_le_size_tree",
+  "function names": [
+    "height",
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size": "primrec size :: \"'a tree ⇒ nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\"",
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\""
+  },
+  "formal theorem statement": "theorem height_le_size_tree: \"height t ≤ size t\""
+}

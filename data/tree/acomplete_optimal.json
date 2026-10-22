@@ -1,0 +1,23 @@
+{
+  "packages": "Main",
+  "theorem name": "acomplete_optimal",
+  "function names": [
+    "height",
+    "min_height",
+    "size",
+    "size1",
+    "complete",
+    "acomplete"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size": "primrec size :: \"'a tree ⇒ nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\"",
+    "size1": "fun size1 :: \"'a tree \\<Rightarrow> nat\" where\n  \"size1 Leaf = 1\" |\n  \"size1 (Node l x r) = size1 l + size1 r\"",
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\"",
+    "min_height": "fun min_height :: \"'a tree ⇒ nat\" where\n  \"min_height Leaf = 0\" |\n  \"min_height (Node l _ r) = min (min_height l) (min_height r) + 1\"",
+    "complete": "fun complete :: \"'a tree ⇒ bool\" where\n  \"complete Leaf = True\" |\n  \"complete (Node l x r) = (height l = height r ∧ complete l ∧ complete r)\"",
+    "acomplete": "definition acomplete :: \"'a tree ⇒ bool\" where\n  \"acomplete t = (height t - min_height t ≤ 1)\""
+  },
+  "formal theorem statement": "theorem acomplete_optimal:\n  \"⟦ acomplete t; size t ≤ size t' ⟧ ⟹ height t ≤ height t'\""
+}

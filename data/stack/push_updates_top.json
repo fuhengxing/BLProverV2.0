@@ -1,0 +1,13 @@
+{
+	"packages": "Main",
+	"theorem name": "push_updates_top",
+	"function names": ["push","pop","top"],
+	"other formal": "type_synonym 'a stack = \"'a list\"",
+	"other rules": [],
+	"formal function definitions": {
+		"push": "definition push :: \"'a \\<Rightarrow> 'a stack \\<Rightarrow> 'a stack\" \n where \"push v s = v#s\"",
+		"pop": "primrec pop :: \"'a stack \\<Rightarrow> ('a \\<times> 'a stack)\"\n where \"pop (x # xs) = (x, xs)\"",
+		"top": "definition top :: \"'a stack \\<Rightarrow> 'a\"\n where \"top s \\<equiv> hd s\""
+	},
+	"formal theorem statement":"theorem push_updates_top: \"top (push v s) = v\""
+}

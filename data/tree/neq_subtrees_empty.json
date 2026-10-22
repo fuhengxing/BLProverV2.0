@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "neq_subtrees_empty",
+  "function names": [
+    "subtrees"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "subtrees": "fun subtrees :: \"'a tree \\<Rightarrow> 'a tree set\" where\n  \"subtrees Leaf = {Leaf}\" |\n  \"subtrees (Node l a r) = {Node l a r} \\<union> subtrees l \\<union> subtrees r\""
+  },
+  "formal theorem statement": "theorem neq_subtrees_empty[simp]: \"subtrees t \\<noteq> {}\""
+}

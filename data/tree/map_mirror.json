@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "map_mirror",
+  "function names": [
+    "mirror",
+    "map_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "map_tree": "primrec map_tree :: \"('a ⇒ 'b) ⇒ 'a tree ⇒ 'b tree\" where\n  \"map_tree f Leaf = Leaf\" |\n  \"map_tree f (Node l x r) = (Node (map_tree f l) (f x) (map_tree f r))\"",
+    "mirror": "fun mirror :: \"'a tree ⇒ 'a tree\" where\n  \"mirror Leaf = Leaf\" |\n  \"mirror (Node (l) (x) (r)) = (Node (mirror r) (x) (mirror l))\""
+  },
+  "formal theorem statement": "theorem map_mirror: \"map_tree f (mirror t) = mirror (map_tree f t)\""
+}

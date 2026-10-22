@@ -1,0 +1,115 @@
+#Role
+You are a rigorous mathematician and expert Isabelle/HOL formalization engineer.
+#Task
+Your task is to provide formal proof sketch in response to given theorem statement and informal proof.
+#Requirement
+1.It has to follow Isabelle's syntax rules.
+2.Each step of the proof should be explained in detail using comments enclosed in "(*" and "*)" .The explanation for each step should be clear and concise,avoiding any unnecessary or apologetic language.
+3.For routine steps, use sledgehammer fill in proof details.
+4.The content you entered must be placed inside {{your outputs}}.You can refer to the output format of the example.
+#Below are examples(few-shot)
+## Function definitions
+{{
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a × 'b) list. distinct (map fst xs) ∧ sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] ∈ ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+definition "values" :: "('a, 'b::linorder) pri_queue ⇒ 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+definition priorities :: "('a, 'b::linorder) pri_queue ⇒ 'b list" ("∥(_)∥") where
+  "priorities q = map snd (alist_of q)"
+definition is_empty :: "('a, 'b::linorder) pri_queue ⇒ bool" where
+  "is_empty q ≡ alist_of q = []"
+definition priority :: "('a, 'b::linorder) pri_queue ⇒ 'a ⇒ 'b option" where
+  "priority q ≡ map_of (alist_of q)"
+definition min :: "('a, 'b::linorder) pri_queue ⇒ 'a" where
+  "min q ≡ fst (hd (alist_of q))"
+definition empty :: "('a, 'b::linorder) pri_queue" where 
+  "empty ≡ Abs_pq []"
+definition push :: "'a ⇒ 'b::linorder ⇒ ('a, 'b) pri_queue ⇒ ('a, 'b) pri_queue" where
+  "push k p q ≡ Abs_pq (if k ∉ set (values q)
+           then insort_key snd (k, p) (alist_of q)
+           else alist_of q)"
+definition remove_min :: "('a, 'b::linorder) pri_queue ⇒ ('a, 'b::linorder) pri_queue" where
+  "remove_min q ≡ (if is_empty q then empty else Abs_pq (tl (alist_of q)))"
+definition pop :: "('a, 'b::linorder) pri_queue ⇒ ('a × ('a, 'b) pri_queue) option" where
+  "pop q = (if is_empty q then None else Some (min q, remove_min q))"
+}}
+## Theorem statement
+{{
+```theorem min_priority_leq_all: assumes a1 :"¬is_empty q " and a2:"v ∈ set|q|" shows " the ( priority q (min q ))≤ the ( priority q v )"```
+}}
+## Informal proof
+{{
+Step 1: Unfold the internal representation Let L = alist_of q. From assumption ¬ is_empty q and the definition is_empty q ≡ (alist_of q = []), we directly obtain L ≠ [].
+Step 2: Express the minimum element and its priority Because L ≠ [], its head is defined. Write (m, p_min) = hd L. By the definition min q ≡ fst (hd (alist_of q)), we have min q = m. Since the pair (m, p_min) belongs to set L (by the fact that the head of a non‑empty list is in the list), and L satisfies the invariant distinct (map fst L), the function map_of L maps each key to at most one value. Thus priority q m = map_of L m = Some p_min.
+Step 3: Characterise an arbitrary value v present in the queue The assumption v ∈ set |q| together with values q = map fst (alist_of q) yields v ∈ set (map fst L). Hence there exists a pair (v, p_v) ∈ set L. By the distinctness of keys in L (the type invariant), this pair is unique for the key v. Consequently priority q v = map_of L v = Some p_v.
+Step 4: Exploit the sortedness invariant The type invariant of pri_queue guarantees that sorted (map snd L) holds, i.e. the list L is sorted in non‑decreasing order of priorities. For a non‑empty list sorted by a projection f, the head gives the minimal f value among all elements. More precisely: ∀ (a,b) ∈ set L. snd (hd L) ≤ b. Applying this to the pair (v, p_v) ∈ set L we obtain p_min ≤ p_v.
+Step 5: Translate the obtained inequalities to the the-expressions From Step 2 we have priority q (min q) = Some p_min, therefore the (priority q (min q)) = p_min. From Step 3 we have priority q v = Some p_v, therefore the (priority q v) = p_v. Step 4 establishes p_min ≤ p_v.
+Step 6: Conclude the desired inequality Combining the equalities of Step 5 with the inequality of Step 4 gives exactly the theorem's statement: the (priority q (min q)) ≤ the (priority q v).
+}}
+## Formal proof
+{{
+```proof -
+(* Step 1: Unfold internal representation and obtain non-empty list *)
+let ?L = "alist_of q"
+have L_nonempty: "?L ≠ []" sledgehammer
+(* Step 2: Express the minimum element and its priority *)
+obtain m p_min where hd_eq: "(m, p_min) = hd ?L" sledgehammer
+have min_eq: "min q = m" sledgehammer
+(* Head belongs to the list *)
+have head_in_set: "(m, p_min) ∈ set ?L" sledgehammer
+(* Distinct keys imply map_of gives the unique value *)
+have distinct_fst: "distinct (map fst ?L)" sledgehammer
+have priority_min_some: "priority q (min q) = Some p_min" sledgehammer
+(* Step 3: Characterise the arbitrary value v *)
+from a2 have v_in_map_fst: "v ∈ set (map fst ?L)" sledgehammer
+then obtain p_v where pair_in_set: "(v, p_v) ∈ set ?L" sledgehammer
+have priority_v_some: "priority q v = Some p_v" sledgehammer
+(* Step 4: Exploit sortedness invariant to get inequality *)
+have sorted_snd: "sorted (map snd ?L)" sledgehammer
+have min_priority_le_all: "∀x ∈ set ?L. snd (hd ?L) ≤ snd x" sledgehammer
+hence "p_min ≤ p_v" sledgehammer
+(* Step 5: Translate Some-expressions using the *)
+have the_min: "the (priority q (min q)) = p_min" sledgehammer
+have the_v: "the (priority q v) = p_v" sledgehammer
+(* Step 6: Conclude *)
+show ?thesis sledgehammer
+qed```
+}}
+[2 more examples]
+## Theorem statement
+{{
+```theorem existing_element_priority_preserved: assumes a1:"k \<in> set |q|" shows " priority (push k p q) k = priority q k"```
+}}
+## Informal proof
+{{
+Step 1: Unfold the definition of `push`.We consider the two branches of the conditional in the definition of `push k p q`.Since the assumption says `k ∈ set |q|`, the condition `k ∉ set (values q)` is false.Therefore,`push k p q = Abs_pq (alist_of q)`.
+Step 2: Relate the priority of the pushed queue to the original queue.By the definition of `priority`, priority (push k p q) = map_of (alist_of (push k p q)).Through the previous step's result, we have `alist_of (push k p q) = alist_of q`.Thus, priority (push k p q) = map_of (alist_of q) = priority q`.
+Step 3: Apply the functions to the key `k`.From Step 2 we obtain the equality of the functions `priority (push k p q)` and `priority q`.In particular, for the key `k`, priority (push k p q) k = priority q k`,which is exactly the statement of the theorem.
+}}
+## Formal proof
+{{
+```proof -
+(* Step 1: Unfold the definition of push.Since k is in the values of q, the conditional in push is false,so push k p q = Abs_pq (alist_of q). *)
+have push_eq: "push k p q = Abs_pq (alist_of q)" sledgehammer
+(* Step 2: Relate the priority of the pushed queue to the original queue. *)
+have alist_eq: "alist_of (push k p q) = alist_of q" sledgehammer
+have priority_eq: "priority (push k p q) = priority q" sledgehammer
+(* Step 3: Apply the functions to the key k. *)
+show ?thesis sledgehammer
+qed```
+}}
+####below are your task(based on Function definitions,Theorem statement,Informal proof,Construct a formal proof)
+### Function definitions
+{{user provide}}
+### Theorem statement
+{{user provide}}
+### Informal proof
+{{user provide}}
+-----The content you entered must be placed inside-----
+## Formal proof
+{{your outputs}}

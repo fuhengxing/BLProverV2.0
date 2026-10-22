@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "set_inorder",
+  "function names": [
+    "inorder",
+    "set_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "inorder": "fun inorder :: \"'a tree ⇒ 'a list\" where \"inorder Leaf = []\" | \"inorder (Node (l) (x) (r)) = inorder l @ [x] @ inorder r\"",
+    "set_tree": "fun set_tree :: \"'a tree ⇒ 'a set\" where \"set_tree Leaf = {}\" | \"set_tree (Node l a r) = {a} ∪ set_tree l ∪ set_tree r\""
+  },
+  "formal theorem statement": "theorem set_inorder[simp]: \"set (inorder t) = set_tree t\""
+}

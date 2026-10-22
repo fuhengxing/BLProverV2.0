@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "eq_size_0",
+  "function names": [
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size": "primrec size :: \"'a tree \\<Rightarrow> nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\""
+  },
+  "formal theorem statement": "theorem eq_size_0[simp]: \"size t = (0::nat) \\<longleftrightarrow> t = Leaf\""
+}

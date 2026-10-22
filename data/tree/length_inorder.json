@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "length_inorder",
+  "function names": [
+    "inorder",
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "inorder": "fun inorder :: \"'a tree ⇒ 'a list\" where \"inorder Leaf = []\" | \"inorder (Node (l) (x) (r)) = inorder l @ [x] @ inorder r\"",
+    "size": "primrec size :: \"'a tree ⇒ nat\" where \"size Leaf = 0\" | \"size (Node l x r) = size l + size r + 1\""
+  },
+  "formal theorem statement": "theorem length_inorder[simp]: \"length (inorder t) = size t\""
+}

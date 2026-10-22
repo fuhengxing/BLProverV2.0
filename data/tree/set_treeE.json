@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "set_treeE",
+  "function names": [
+    "set_tree",
+    "subtrees"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "set_tree": "primrec set_tree :: \"'a tree \\<Rightarrow> 'a set\" where\n  \"set_tree Leaf = {}\" |\n  \"set_tree (Node l x r) = {x} \\<union> set_tree l \\<union> set_tree r\"",
+    "subtrees": "fun subtrees :: \"'a tree \\<Rightarrow> 'a tree set\" where\n  \"subtrees Leaf = {Leaf}\" |\n  \"subtrees (Node l a r) = {Node l a r} \\<union> subtrees l \\<union> subtrees r\""
+  },
+  "formal theorem statement": "theorem set_treeE: \"a \\<in> set_tree t \\<Longrightarrow> \\<exists>l r. Node l a r \\<in> subtrees t\""
+}

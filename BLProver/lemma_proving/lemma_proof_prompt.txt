@@ -1,0 +1,194 @@
+# Role
+
+You are an expert in Isabelle/HOL formal verification. You write clear, structured Isar proofs and use automation tools such as `auto`, `blast`, `metis`, and `sledgehammer` effectively.
+
+# Task
+
+Given **Function definitions** and **Lemma** (the goal to prove), write a proof that **Isabelle can verify**.
+
+You must also explain your own proof plan in **Proof strategy** (natural-language steps or reasoning — this is **your** output only).
+
+# Rules
+
+- Output a **complete, machine-checkable proof** for the target lemma (Isabelle must accept it).
+- Prefer structured Isar (`proof` … `qed`), using `by` with automation where appropriate.
+- Add comments `(* ... *)` at key steps explaining which facts, induction hypotheses, or simp rules you use.
+- If you use sledgehammer-style steps, rewrite them as standard Isar or `by` commands; do not emit raw `sledgehammer` calls.
+- For induction, show the `induction` rule and separate base and step cases. For case splits, use `cases` / `case` clearly.
+- Do **not** use `sorry` or `oops`; every subgoal must be discharged.
+
+# Output format (strict)
+
+Respond with **exactly** these two markdown sections, in this order:
+
+### Lemma proof
+
+```isabelle
+<proof script only: e.g. "by auto" or "proof -" … "qed"; do not repeat the lemma header>
+```
+
+### Proof strategy
+
+<Your proof plan: 1–4 sentences on the main steps, case splits, or lemmas you use — not Isabelle error messages>
+
+Do not add extra sections. Do not wrap the whole answer in an outer markdown fence.
+
+---
+
+# Examples
+
+## Example 1
+
+**Input**
+
+### Function definitions
+
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a \<times> 'b) list. distinct (map fst xs) \<and> sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] \<in> ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+
+definition "values" :: "('a, 'b::linorder) pri_queue \<Rightarrow> 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+
+definition is_empty :: "('a, 'b::linorder) pri_queue \<Rightarrow> bool" where
+  "is_empty q \<equiv> alist_of q = []"
+
+definition priority :: "('a, 'b::linorder) pri_queue \<Rightarrow> 'a \<Rightarrow> 'b option" where
+  "priority q \<equiv> map_of (alist_of q)"
+
+definition min :: "('a, 'b::linorder) pri_queue \<Rightarrow> 'a" where
+  "min q \<equiv> fst (hd (alist_of q))"
+
+definition empty :: "('a, 'b::linorder) pri_queue" where
+  "empty \<equiv> Abs_pq []"
+
+### Lemma
+
+lemma "values empty = []"
+
+**Output**
+
+### Lemma proof
+
+```isabelle
+proof -
+  have "alist_of empty = []"
+    unfolding empty_def
+    by (simp add: Abs_pq_inverse)
+  then show ?thesis
+    unfolding values_def by simp
+qed
+```
+
+### Proof strategy
+
+Show `alist_of empty = []` via `empty_def` and `Abs_pq_inverse`, then unfold `values_def` so `map fst [] = []`.
+
+---
+
+## Example 2
+
+**Input**
+
+### Function definitions
+
+(Same as Example 1.)
+
+### Lemma
+
+lemma "alist_of q \<noteq> [] \<Longrightarrow> hd (values q) = min q"
+
+**Output**
+
+### Lemma proof
+
+```isabelle
+proof (cases "alist_of q")
+  case Nil
+  then show ?thesis by simp
+next
+  case (Cons a xs)
+  (* alist_of q = a # xs; a is the head key-value pair *)
+  then show ?thesis
+    unfolding values_def min_def
+    by simp
+qed
+```
+
+### Proof strategy
+
+Case-split on `alist_of q`. If empty, the premise is false. If `a # xs`, then `hd (values q) = fst a` and `min q = fst (hd (a # xs))`; unfold definitions to conclude.
+
+---
+
+## Example 3
+
+**Input**
+
+### Function definitions
+
+(Same as Example 1.)
+
+### Lemma
+
+lemma min_is_least_priority:
+  assumes "alist_of q \<noteq> []"
+  shows "\<forall>k p. priority q k = Some p \<longrightarrow> snd (hd (alist_of q)) \<le> p"
+
+**Output**
+
+### Lemma proof
+
+```isabelle
+proof (intro allI impI)
+  fix k p
+  assume "priority q k = Some p"
+  obtain x xs where alist: "alist_of q = x # xs"
+    using assms by (cases "alist_of q") auto
+  have "priority q k = map_of (x # xs) k"
+    unfolding priority_def using alist by simp
+  with `priority q k = Some p` have map_eq: "map_of (x # xs) k = Some p" by simp
+  have "alist_of q \<in> {xs. distinct (map fst xs) \<and> sorted (map snd xs)}"
+    by (rule alist_of)
+  with alist have sorted: "sorted (map snd (x # xs))" by simp
+  from map_eq show "snd (hd (alist_of q)) \<le> p"
+  proof (cases "k = fst x")
+    case True
+    then have "p = snd x" using map_eq by simp
+    then show ?thesis unfolding alist by simp
+  next
+    case False
+    then have "map_of xs k = Some p" using map_eq by (simp add: map_of_eq_None_iff)
+    from sorted have "snd x \<le> hd (map snd (x # xs))" by (simp add: sorted_simps)
+    moreover have "hd (map snd (x # xs)) = snd x" by simp
+    ultimately have le_x: "\<forall>y\<in>set (map snd xs). snd x \<le> y"
+      using sorted by (auto simp: sorted_Cons)
+    from `map_of xs k = Some p` have "p \<in> set (map snd xs)"
+      by (metis map_of_SomeD option.inject set_map)
+    with le_x show ?thesis unfolding alist by simp
+  qed
+qed
+```
+
+### Proof strategy
+
+Fix `k`, `p` with `priority q k = Some p`, obtain `x # xs`. Use the typedef invariant (`sorted` on priorities). Case-split on whether `k = fst x` (then `p = snd x`) or `k` is in `xs` (then use sortedness so `snd x ≤ p`).
+
+---
+
+####below are your task
+
+Produce the output sections for the following input.
+
+### Function definitions
+
+{{}}
+
+### Lemma
+
+{{}}
+

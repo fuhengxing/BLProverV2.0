@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "eq_inorder_Nil",
+  "function names": [
+    "inorder"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "inorder": "fun inorder :: \"'a tree ⇒ 'a list\" where\n  \"inorder Leaf = []\" |\n  \"inorder (Node (l) (x) (r)) = inorder l @ [x] @ inorder r\""
+  },
+  "formal theorem statement": "theorem eq_inorder_Nil[simp]: \"inorder t = [] ⟷ t = Leaf\""
+}

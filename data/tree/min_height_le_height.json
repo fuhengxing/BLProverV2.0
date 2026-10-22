@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "min_height_le_height",
+  "function names": [
+    "min_height",
+    "height"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\"",
+    "min_height": "fun min_height :: \"'a tree ⇒ nat\" where\n  \"min_height Leaf = 0\" |\n  \"min_height (Node l _ r) = min (min_height l) (min_height r) + 1\""
+  },
+  "formal theorem statement": "theorem min_height_le_height: \"min_height t ≤ height t\""
+}

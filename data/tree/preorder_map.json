@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "preorder_map",
+  "function names": [
+    "preorder",
+    "map_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "map_tree": "primrec map_tree :: \"('a⇒'b) ⇒ 'a tree ⇒ 'b tree\" where \"map_tree f Leaf = Leaf\" | \"map_tree f (Node l x r) = (Node (map_tree f l) (f x) (map_tree f r))\"",
+    "preorder": "fun preorder :: \"'a tree ⇒ 'a list\" where \"preorder Leaf = []\" | \"preorder (Node (l) (x) (r)) = x # preorder l @ preorder r\""
+  },
+  "formal theorem statement": "theorem preorder_map: \"preorder (map_tree f t) = map f (preorder t)\""
+}

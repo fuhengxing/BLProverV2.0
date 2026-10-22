@@ -1,0 +1,13 @@
+{
+	"packages": "Main",
+	"theorem name": "pop_push_inverse",
+	"function names": ["push","pop","emp"],
+	"other formal": "type_synonym 'a stack = \"'a list\"",
+	"other rules": [],
+	"formal function definitions": {
+		"push": "definition push :: \"'a \\<Rightarrow> 'a stack \\<Rightarrow> 'a stack\" \n where \"push v s = v#s\"",
+		"pop": "primrec pop :: \"'a stack \\<Rightarrow> ('a \\<times> 'a stack)\"\n where \"pop (x # xs) = (x, xs)\"",
+		"emp": "definition \"emp s \\<equiv> s = []\""
+	},
+	"formal theorem statement": "theorem pop_push_inverse:\n  assumes a1:\"\\<not> emp s\" and a2:\"(v, s0) = pop s\"\n  shows \"push v s0 = s\""
+}

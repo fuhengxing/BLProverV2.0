@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "min_height_mirror",
+  "function names": [
+    "mirror",
+    "min_height"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "min_height": "fun min_height :: \"'a tree ⇒ nat\" where\n  \"min_height Leaf = 0\" |\n  \"min_height (Node l _ r) = min (min_height l) (min_height r) + 1\"",
+    "mirror": "fun mirror :: \"'a tree ⇒ 'a tree\" where\n  \"mirror Leaf = Leaf\" |\n  \"mirror (Node (l) (x) (r)) = (Node (mirror r) (x) (mirror l))\""
+  },
+  "formal theorem statement": "theorem min_height_mirror[simp]: \"min_height (mirror t) = min_height t\""
+}

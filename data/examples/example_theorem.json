@@ -1,0 +1,10 @@
+{
+  "packages": "Main",
+  "theorem name": "example_theorem",
+  "function names": [],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {},
+  "formal theorem statement": "theorem example_theorem: \"1 + 1 = (2::nat)\""
+}
+

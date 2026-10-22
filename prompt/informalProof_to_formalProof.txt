@@ -1,0 +1,167 @@
+#Role
+You are a rigorous mathematician and expert Isabelle/HOL formalization engineer.
+#Task
+Your task is to provide formal proof sketch in response to agiven theorem statement and informal proof  and  Some potentially useful lemmas.
+Note:These lemmas might be very useful because they are based on theorem statements and informal proofs.
+#Requirement:
+1.It can be verified by Isabelle.
+2.Each step of the proof should be explained in detail using comments enclosed in "(*" and "*)".
+3.The explanation for each step should be clear and concise, avoiding any unnecessary or apologetic language.
+4.Provide a complete proof sketch. For routine steps, use explicit Isabelle tactics: by simp, by auto, by blast, by force, by arith, by eval; use using <lemma> and unfolding <def> when a provided lemma or definition clearly applies.
+5.When numeric literals appear in proof sketch, give them explicit types with `::` when ambiguity would block later proof or verification. Example: write `have pow_l_le_max: "(2::nat) ^ height l ≤ (2::nat) ^ max (height l) (height r)"`, not bare `have pow_l_le_max: "2^ height l ≤ 2 ^ max (height l) (height r)"`; similarly use `(0::nat)`, `(1::nat)` where needed.
+6.Reuse lemmas from "potentially useful lemmas" by name whenever possible.
+7.The content you entered must be placed inside {{your outputs}}.You can refer to the output format of the example(## Formal proof sketch).
+#below are examples
+## Function  definitions
+{{
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a × 'b) list. distinct (map fst xs) ∧ sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] ∈ ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+definition "values" :: "('a, 'b::linorder) pri_queue ⇒ 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+definition priorities :: "('a, 'b::linorder) pri_queue ⇒ 'b list" ("∥(_)∥") where
+  "priorities q = map snd (alist_of q)"
+definition is_empty :: "('a, 'b::linorder) pri_queue ⇒ bool" where
+  "is_empty q ≡ alist_of q = []"
+definition priority :: "('a, 'b::linorder) pri_queue ⇒ 'a ⇒ 'b option" where
+  "priority q ≡ map_of (alist_of q)"
+definition min :: "('a, 'b::linorder) pri_queue ⇒ 'a" where
+  "min q ≡ fst (hd (alist_of q))"
+definition empty :: "('a, 'b::linorder) pri_queue" where 
+  "empty ≡ Abs_pq []"
+definition push :: "'a ⇒ 'b::linorder ⇒ ('a, 'b) pri_queue ⇒ ('a, 'b) pri_queue" where
+  "push k p q ≡ Abs_pq (if k ∉ set (values q)
+           then insort_key snd (k, p) (alist_of q)
+           else alist_of q)"
+definition remove_min :: "('a, 'b::linorder) pri_queue ⇒ ('a, 'b::linorder) pri_queue" where
+  "remove_min q ≡ (if is_empty q then empty else Abs_pq (tl (alist_of q)))"
+definition pop :: "('a, 'b::linorder) pri_queue ⇒ ('a × ('a, 'b) pri_queue) option" where
+  "pop q = (if is_empty q then None else Some (min q, remove_min q))"
+}}
+## Theorem statement
+{{
+```isabelle
+theorem min_priority_leq_all:
+ assumes a1 :"¬is_empty q " and a2:"v ∈ set|q|"
+ shows " the ( priority q (min q ))≤ the ( priority q v )"
+```
+}}
+## Informal proof
+{{
+    To prove the theorem min_priority_leq_all, we proceed step by step, ensuring each reasoning step is small and precise.
+Step 1: Unfold the internal representation Let L = alist_of q. From assumption ¬ is_empty q and the definition is_empty q ≡ (alist_of q = []), we directly obtain L ≠ [].
+Step 2: Express the minimum element and its priority Because L ≠ [], its head is defined. Write (m, p_min) = hd L. By the definition min q ≡ fst (hd (alist_of q)), we have min q = m. Since the pair (m, p_min) belongs to set L (by the fact that the head of a non‑empty list is in the list), and L satisfies the invariant distinct (map fst L), the function map_of L maps each key to at most one value. Thus priority q m = map_of L m = Some p_min.
+Step 3: Characterise an arbitrary value v present in the queue The assumption v ∈ set |q| together with values q = map fst (alist_of q) yields v ∈ set (map fst L). Hence there exists a pair (v, p_v) ∈ set L. By the distinctness of keys in L (the type invariant), this pair is unique for the key v. Consequently priority q v = map_of L v = Some p_v.
+Step 4: Exploit the sortedness invariant The type invariant of pri_queue guarantees that sorted (map snd L) holds, i.e. the list L is sorted in non‑decreasing order of priorities. For a non‑empty list sorted by a projection f, the head gives the minimal f value among all elements. More precisely: ∀ (a,b) ∈ set L. snd (hd L) ≤ b. Applying this to the pair (v, p_v) ∈ set L we obtain p_min ≤ p_v.
+Step 5: Translate the obtained inequalities to the the-expressions From Step 2 we have priority q (min q) = Some p_min, therefore the (priority q (min q)) = p_min. From Step 3 we have priority q v = Some p_v, therefore the (priority q v) = p_v. Step 4 establishes p_min ≤ p_v.
+Step 6: Conclude the desired inequality Combining the equalities of Step 5 with the inequality of Step 4 gives exactly the theorem's statement: the (priority q (min q)) ≤ the (priority q v).
+}}
+### potentially useful lemmas
+{{
+### new lemma1
+Meaning: A priority queue is non‑empty if and only if its underlying list is non‑empty.
+Source: Step 1 – "From assumption ¬ is_empty q and the definition of is_empty, we have L ≠ []."
+```isabelle
+lemma is_empty_iff_alist_eq_nil:  
+  fixes q :: "('a, 'b::linorder) pri_queue"  
+  shows "is_empty q ⟷ alist_of q = []" 
+sorry
+```
+### new lemma2
+Meaning: If the queue is non‑empty, the head of the underlying list belongs to that list.
+Source: Step 2 – "Since the pair (m, p_min) belongs to set L (by the fact that the head of a non‑empty list is in the list)."
+```isabelle
+lemma hd_in_set_if_nonempty:  
+  fixes xs :: "'a list"  
+  assumes "xs ≠ []"  
+  shows "hd xs ∈ set xs" 
+sorry 
+```
+...
+...
+### new lemma9
+Meaning: For a non‑empty list sorted by a projection function f, the head of the list gives the minimum projected value across all elements.
+Source: Step 4 – "For a non‑empty list sorted by a projection f, the head gives the minimal f value among all elements."
+```isabelle
+lemma sorted_proj_hd_min:  
+  fixes xs :: "'a list" and f :: "'a ⇒ 'b::linorder"  
+  assumes "sorted (map f xs)" and "xs ≠ []"  
+  shows "∀x ∈ set xs. f (hd xs) ≤ f x" 
+sorry
+```
+}}
+## Formal proof sketch
+{{
+```isabelle
+theorem min_priority_leq_all:
+ assumes a1 :"¬is_empty q " and a2:"v ∈ set|q|"
+ shows " the ( priority q (min q ))≤ the ( priority q v )"
+proof -  
+  (* Step 1: Unfold the internal representation and confirm the list is non-empty *)  
+  let ?L = "alist_of q"  
+  have h1: "?L ≠ []"  
+    using a1 is_empty_iff_alist_eq_nil by auto
+  (* Step 2: Define the minimum element and its priority, expressed as hd ?L *)  
+  obtain m p_min where hd_def: "(m, p_min) = hd ?L"
+    by auto
+  have h2: "min q = m"  
+    unfolding min_def hd_def by simp
+  have h3: "(m, p_min) ∈ set ?L"  
+    using h1 hd_in_set_if_nonempty by auto
+  have h4: "priority q (min q) = Some p_min"  
+  proof -  
+    have h4a: "distinct (map fst ?L)"  
+      using pri_queue_distinct_fst[of q] .  
+    with h3 show ?thesis  
+      unfolding priority_def h2 hd_def
+      by simp
+  qed  
+  (* Step 3: For an arbitrary value v in the queue, extract its associated priority *)  
+  have h5: "v ∈ set (map fst ?L)"  
+    using a2 unfolding values_def .  
+  from h5 obtain p_v where h6: "(v, p_v) ∈ set ?L"  
+    using values_in_set_iff_exists_pair[of q v] unfolding values_def by auto
+  have h7: "priority q v = Some p_v"  
+  proof -  
+    have h7a: "distinct (map fst ?L)"  
+      using pri_queue_distinct_fst[of q] .  
+    with h6 show ?thesis  
+      unfolding priority_def
+      by auto
+  qed  
+  (* Step 4: Exploit the sortedness of the queue to obtain the inequality p_min ≤ p_v *)  
+  have h8: "sorted (map snd ?L)"  
+    using pri_queue_sorted_snd[of q] .  
+  have h9: "p_min ≤ p_v"  
+  proof -  
+    from h1 h8 have h9a: "∀(a,b)∈set ?L. snd (hd ?L) ≤ b"  
+      using sorted_proj_hd_min by auto
+    with hd_def h6 show ?thesis  
+      by simp
+  qed  
+  (* Step 5: Unfold the Some constructors and apply the inequality *)  
+  have h10: "the (priority q (min q)) = p_min"  
+    using h4 by simp
+  have h11: "the (priority q v) = p_v"  
+    using h7 by simp
+  show ?thesis  
+    using h10 h11 h9 by auto
+qed  
+```
+}}
+####below are your task(based on Function definitions,Theorem statement,Informal proof,potentially useful lemmas,Construct a formal proof sketch)
+### Function  definitions
+{{user provide}}
+### Theorem statement
+{{user provide}}
+### Informal proof
+{{user provide}}
+###potentially useful lemmas
+{{user provide}}
+-----The content you entered must be placed inside-----
+## Formal proof sketch
+{{your outputs}}

@@ -1,0 +1,15 @@
+{
+    "packages": "Main",
+    "theorem name": "min_priority_leq_all",
+    "function names": ["is_empty","empty","values","priority","min"],
+    "other formal": "typedef (overloaded) ('a, 'b::linorder) pri_queue =\n  \"{xs :: ('a \\<times> 'b) list. distinct (map fst xs) \\<and> sorted (map snd xs)}\"\n  morphisms alist_of Abs_pq\nproof -\n  have \"[] \\<in> ?pri_queue\" by simp\n  then show ?thesis by blast\nqed \n",
+  "other rules": ["alist_of_inverse", "alist_of", "Abs_pq_inverse", "Abs_pq_inject"],
+    "formal function definitions": {
+      "values": "definition \"values\" :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> 'a list\" (\"|(_)|\") where\n  \"values q = map fst (alist_of q)\"",
+      "is_empty": "definition is_empty :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> bool\" where\n  \"is_empty q \\<equiv> alist_of q = []\"",
+      "priority": "definition priority :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> 'a \\<Rightarrow> 'b option\" where\n  \"priority q \\<equiv> map_of (alist_of q)\"",
+      "min": "definition min :: \"('a, 'b::linorder) pri_queue \\<Rightarrow> 'a\" where\n  \"min q \\<equiv> fst (hd (alist_of q))\"",
+      "empty": "definition empty :: \"('a, 'b::linorder) pri_queue\" where \n  \"empty \\<equiv> Abs_pq []\""
+      },
+  "formal theorem statement": "theorem min_priority_leq_all: assumes a1:\"\\<not> is_empty q\" and a2:\"v \\<in> set |q|\"\n shows \"the (priority q (min q)) \\<le> the (priority q v)\""
+}

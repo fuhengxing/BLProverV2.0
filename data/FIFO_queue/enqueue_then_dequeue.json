@@ -1,0 +1,12 @@
+{
+  "packages": "Main",
+  "theorem name": "enqueue_then_dequeue",
+  "function names": ["enqueue","dequeue"],
+  "other formal": "type_synonym 'a queue = \"'a list\"\n\nabbreviation \"emptyq ≡ []\"\n\n",
+  "other rules": [],
+  "formal function definitions": {
+    "enqueue": "fun enqueue :: \"'a queue \\<Rightarrow> 'a \\<Rightarrow> 'a queue\" \nwhere \"enqueue xs x = x # xs\"",
+    "dequeue": "fun dequeue :: \"'a queue \\<Rightarrow> ('a \\<times> 'a queue)\" \nwhere \"dequeue xs = (last xs, butlast xs)\""
+  },
+  "formal theorem statement": "theorem enqueue_then_dequeueu:\"dequeue (enqueue emptyq a) = (a, emptyq)\""
+}

@@ -1,0 +1,14 @@
+{
+	"packages":"Main",
+	"theorem name":"top_element_after_pop",
+	"function names":["push","pop","top","emp"],
+	"other formal": "type_synonym 'a stack = \"'a list\"",
+	"other rules": [],
+	"formal function definitions": {
+		"push": "definition push :: \"'a \\<Rightarrow> 'a stack \\<Rightarrow> 'a stack\" \n where \"push v s = v#s\"",
+		"pop": "primrec pop :: \"'a stack \\<Rightarrow> ('a \\<times> 'a stack)\"\n where \"pop (x # xs) = (x, xs)\"",
+		"top": "definition top :: \"'a stack \\<Rightarrow> 'a\"\n where \"top s \\<equiv> hd s\"",
+		"emp": "definition \"emp s \\<equiv> s = []\""
+	},
+	"formal theorem statement":"theorem top_element_after_pop: \n  assumes a1:\"\\<not> emp s \"\n    shows \"top s = fst (pop s)\""
+}

@@ -1,0 +1,12 @@
+{
+  "packages": "Main",
+  "theorem name": "listenq_rev",
+  "function names": ["enqueue","listenq"],
+  "other formal": "\ntype_synonym 'a queue = \"'a list\"\n",
+  "other rules": ["listenq.induct"],
+  "formal function definitions": {
+    "listenq": "fun listenq :: \"'a queue \\<Rightarrow> 'a list \\<Rightarrow> 'a queue\" where\n  \"listenq q [] = q\" |\n  \"listenq q (x # xs) = listenq (enqueue q x) xs\"",
+    "enqueue": "fun enqueue :: \"'a queue \\<Rightarrow> 'a \\<Rightarrow> 'a queue\" \nwhere \"enqueue xs x = x # xs\""
+  },
+  "formal theorem statement": "theorem listenq_rev: \"listenq q xs = (rev xs) @ q\""
+}

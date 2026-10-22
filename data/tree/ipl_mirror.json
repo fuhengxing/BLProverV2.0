@@ -1,0 +1,17 @@
+{
+  "packages": "Main",
+  "theorem name": "ipl_mirror",
+  "function names": [
+    "mirror",
+    "ipl",
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size": "primrec size :: \"'a tree ⇒ nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\"",
+    "ipl": "fun ipl :: \"'a tree ⇒ nat\" where\n  \"ipl Leaf = 0\" |\n  \"ipl (Node l _ r) = ipl l + size l + ipl r + size r\"",
+    "mirror": "fun mirror :: \"'a tree ⇒ 'a tree\" where\n  \"mirror Leaf = Leaf\" |\n  \"mirror (Node (l) (x) (r)) = (Node (mirror r) (x) (mirror l))\""
+  },
+  "formal theorem statement": "theorem ipl_mirror[simp]: \"ipl (mirror t) = ipl t\""
+}

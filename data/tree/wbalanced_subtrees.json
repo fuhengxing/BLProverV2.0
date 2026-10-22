@@ -1,0 +1,17 @@
+{
+  "packages": "Main",
+  "theorem name": "wbalanced_subtrees",
+  "function names": [
+    "wbalanced",
+    "size",
+    "subtrees"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size": "primrec size :: \"'a tree ⇒ nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\"",
+    "subtrees": "fun subtrees :: \"'a tree ⇒ 'a tree set\" where\n  \"subtrees Leaf = {Leaf}\" |\n  \"subtrees (Node l a r) = {Node l a r} ∪ subtrees l ∪ subtrees r\"",
+    "wbalanced": "fun wbalanced :: \"'a tree ⇒ bool\" where\n  \"wbalanced Leaf = True\" |\n  \"wbalanced (Node l x r) = (abs(int (size l) - int (size r)) ≤ 1 ∧ wbalanced l ∧ wbalanced r)\""
+  },
+  "formal theorem statement": "theorem wbalanced_subtrees: \"⟦ wbalanced t; s ∈ subtrees t ⟧ ⟹ wbalanced s\""
+}

@@ -1,0 +1,17 @@
+{
+  "packages": "Main",
+  "theorem name": "size_height",
+  "function names": [
+    "size",
+    "size1",
+    "height"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size1": "fun size1 :: \"'a tree ⇒ nat\" where\n  \"size1 Leaf = 1\" |\n  \"size1 (Node (l) (x) (r)) = size1 l + size1 r\"",
+    "size": "primrec size :: \"'a tree ⇒ nat\" where\n  \"size Leaf = 0\" |\n  \"size (Node l x r) = size l + size r + 1\"",
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\""
+  },
+  "formal theorem statement": "corollary size_height: \"size t ≤ (2::nat) ^ height t - (1::nat)\""
+}

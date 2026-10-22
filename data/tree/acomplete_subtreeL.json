@@ -1,0 +1,17 @@
+{
+  "packages": "Main",
+  "theorem name": "acomplete_subtreeL",
+  "function names": [
+    "height",
+    "min_height",
+    "acomplete"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\"",
+    "min_height": "fun min_height :: \"'a tree ⇒ nat\" where\n  \"min_height Leaf = 0\" |\n  \"min_height (Node l _ r) = min (min_height l) (min_height r) + 1\"",
+    "acomplete": "definition acomplete :: \"'a tree ⇒ bool\" where\n  \"acomplete t = (height t - min_height t ≤ 1)\""
+  },
+  "formal theorem statement": "theorem acomplete_subtreeL: \"acomplete (Node l x r) ⟹ acomplete l\""
+}

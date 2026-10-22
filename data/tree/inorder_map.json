@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "inorder_map",
+  "function names": [
+    "inorder",
+    "map_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "map_tree": "primrec map_tree :: \"('a ⇒ 'b) ⇒ 'a tree ⇒ 'b tree\" where\n  \"map_tree f Leaf = Leaf\" |\n  \"map_tree f (Node l x r) = (Node (map_tree f l) (f x) (map_tree f r))\"",
+    "inorder": "fun inorder :: \"'a tree ⇒ 'a list\" where\n  \"inorder Leaf = []\" |\n  \"inorder (Node (l) (x) (r)) = inorder l @ [x] @ inorder r\""
+  },
+  "formal theorem statement": "theorem inorder_map: \"inorder (map_tree f t) = map f (inorder t)\""
+}

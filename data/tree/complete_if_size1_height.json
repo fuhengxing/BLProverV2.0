@@ -1,0 +1,17 @@
+{
+  "packages": "Main",
+  "theorem name": "complete_if_size1_height",
+  "function names": [
+    "complete",
+    "size1",
+    "height"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size1": "fun size1 :: \"'a tree ⇒ nat\" where\n  \"size1 Leaf = 1\" | \"size1 (Node (l) (x) (r)) = size1 l + size1 r\"",
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" | \"height (Node l a r) = max (height l) (height r) + 1\"",
+    "complete": "fun complete :: \"'a tree ⇒ bool\" where\n  \"complete Leaf = True\" | \"complete (Node l x r) = (height l = height r ∧ complete l ∧ complete r)\""
+  },
+  "formal theorem statement": "theorem complete_if_size1_height: \"size1 t = (2::nat) ^ height t ⟹ complete t\""
+}

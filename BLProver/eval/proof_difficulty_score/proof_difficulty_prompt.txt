@@ -1,0 +1,157 @@
+# Role
+You are an expert in Isabelle theorem proving and formal verification. Your task is to assess the **proof reasoning difficulty** of a given Isabelle lemma statement — i.e., how much effort a human or an automated proof assistant (such as Sledgehammer, induction, etc.) would need to complete its formal proof.
+
+# Steps to follow
+1. Read and understand the type definitions, assumptions (assumes), and conclusion (shows) of the lemma.
+2. Ignore syntactic complexity (e.g., expression length, variable name length) and focus only on **logical reasoning difficulty**.
+3. Rate the lemma along **5 sub-dimensions** below (each dimension from 1 to 5, where 1 = easiest, 5 = hardest).
+4. Compute an **overall score** (1–10, where 1 = easiest, 10 = hardest) based on the sub-dimensions.
+5. Output the result in **JSON format** together with a concise reason explaining the main sources of difficulty.
+
+---
+
+## Scoring dimensions and detailed criteria
+
+### 1. Logic complexity (logic_complexity)
+Examines quantifier nesting, connectives, negation depth, etc.
+- **1 point**: No nested quantifiers, only flat conjunctions/disjunctions, e.g., `A ∧ B ∧ C` or `∀x. P x`.
+- **2 points**: One layer of quantifiers, at most one implication or equivalence, no quantifier alternation.
+- **3 points**: Two layers of alternating quantifiers (e.g., `∀x. ∃y. ...`) or a chain of implications.
+- **4 points**: Three or more alternating quantifiers, or double quantifiers (e.g., `∀x ∀y. ∃z. ...`), or mutually exclusive connective combinations (e.g., `¬(A ∧ ¬B)`).
+- **5 points**: Extremely complex quantifier patterns (e.g., `∀x. ∃y. ∀z. ...`) mixed with implications in different directions, or higher-order quantifiers (quantification over predicates).
+
+### 2. Required proof technique (proof_technique)
+Assesses the strongest/most complex method likely needed.
+- **1 point**: Only applying given assumptions or basic simplification (simp/auto in one step).
+- **2 points**: Simple equational reasoning or algebraic simplification (e.g., arith, algebra).
+- **3 points**: Structural induction (induction) on a single variable; or a simple lemma that sledgehammer can find.
+- **4 points**: Well-founded induction, mutual recursion induction; or proof by contradiction + existential construction; or complex induction on multiple variables simultaneously.
+- **5 points**: Combining multiple techniques (induction + contradiction + constructive choice); or requiring coinduction, compactness arguments, or importing complex lemmas from an advanced theory.
+
+### 3. Domain knowledge (domain_knowledge)
+How much specialised mathematical/formal background is needed beyond basic logic.
+- **1 point**: Only logic or simple arithmetic (addition/subtraction on nat/int), no special theories.
+- **2 points**: Elementary set theory, basic list operations (hd/tl), finite sets, common data structure properties.
+- **3 points**: Elementary number theory (primes, modular arithmetic), simple recursive functions, or basic tree/graph concepts.
+- **4 points**: Calculus (limits, derivatives), abstract algebra (groups/rings/fields), automata theory, etc.
+- **5 points**: Deep theories (topology, category theory, homotopy type theory) or combining advanced theorems from multiple distinct fields.
+
+### 4. Proof length and steps (proof_length)
+Intuitive estimate of how many lines / main reasoning steps a complete formal proof would require.
+- **1 point**: ≤ 5 lines of Isabelle proof script, or a single `by simp`.
+- **2 points**: 6–15 lines, containing several intermediate subgoals, each relatively simple.
+- **3 points**: 16–30 lines, requiring explicit induction or cases, and including 3–5 main lemmas.
+- **4 points**: 31–60 lines, with multiple nested subproofs or several mutually recursive auxiliary lemmas.
+- **5 points**: More than 60 lines, or a proof containing a long and complex computation/reasoning chain, or requiring an external large theory file.
+
+### 5. Edge-case risk (edge_case_risk)
+Whether the proof must handle empty sets, zero, negative indices, out-of-bounds, illegal inputs, or other easily overlooked corner cases.
+- **1 point**: The lemma involves no operations that introduce edge cases (e.g., pure logical equivalences).
+- **2 points**: List/tree operations are guarded by a non-empty precondition (assumes "xs ≠ []") – edges are already excluded.
+- **3 points**: No explicit guard, but ordinary induction can handle it automatically (e.g., natural numbers starting from 0).
+- **4 points**: Explicit distinction between zero and non-zero, or empty vs non-empty sets, and the handling is complex.
+- **5 points**: Multiple interdependent edge conditions (e.g., division, sqrt, array indices appear together in the conclusion) that easily lead to meaningless subgoals.
+
+---
+
+## Overall score calculation
+
+**Overall score = round( (logic_complexity + proof_technique + domain_knowledge + proof_length + edge_case_risk) / 5 * 2 )**
+
+That is: average of the five dimensions multiplied by 2, rounded to the nearest integer, yielding a score between 1 and 10. Use this formula directly; do not apply any other mapping.
+
+The JSON field for the overall score must be named **total_score** (not overall_score).
+
+---
+
+## Output format (strictly JSON)
+
+Return a single JSON object with exactly these keys (when scoring succeeds):
+
+```json
+{
+  "logic_complexity": <integer 1-5>,
+  "proof_technique": <integer 1-5>,
+  "domain_knowledge": <integer 1-5>,
+  "proof_length": <integer 1-5>,
+  "edge_case_risk": <integer 1-5>,
+  "total_score": <integer 1-10>,
+  "reason": "<concise explanation of the main difficulty>"
+}
+```
+
+---
+
+## Few-shot examples (for style and score anchoring)
+
+### Example 1 (simple lemma)
+**Lemma**:
+```isabelle
+lemma simple_add: "a + 0 = (a::nat)"
+```
+**Output**:
+```json
+{
+  "logic_complexity": 1,
+  "proof_technique": 1,
+  "domain_knowledge": 1,
+  "proof_length": 1,
+  "edge_case_risk": 1,
+  "total_score": 2,
+  "reason": "Plain equality, no nested quantifiers. The additive identity for natural numbers is a basic theorem, can be proved by auto, no edge cases."
+}
+```
+
+### Example 2 (moderate lemma)
+**Lemma**:
+```isabelle
+lemma sum_of_nats: "∑ i=1..n. i = n * (n + 1) div 2"
+```
+**Output**:
+```json
+{
+  "logic_complexity": 2,
+  "proof_technique": 3,
+  "domain_knowledge": 2,
+  "proof_length": 2,
+  "edge_case_risk": 2,
+  "total_score": 4,
+  "reason": "Requires induction on n; involves integer division and the semantics of summation, but the edge case (n=0) is easy to handle."
+}
+```
+
+### Example 3 (difficult lemma)
+**Lemma**:
+```isabelle
+lemma infinite_primes: "∀n::nat. ∃p::nat. prime p ∧ p > n"
+```
+**Output**:
+```json
+{
+  "logic_complexity": 3,
+  "proof_technique": 5,
+  "domain_knowledge": 4,
+  "proof_length": 4,
+  "edge_case_risk": 3,
+  "total_score": 8,
+  "reason": "Requires proof by contradiction plus constructive argument (p = n!+1 prime factor), relies on number theory properties of primes and factorial; induction is not directly applicable, proof chain is long."
+}
+```
+
+---
+
+## Special case handling
+
+- If the lemma statement contains **obvious syntactic errors** or **type mismatches** that prevent understanding, output:
+```json
+{"error": "invalid_statement", "reason": "Describe the specific error"}
+```
+- If the lemma is **unprovable** (e.g., `"False"`), still attempt to assess its difficulty (usually very high, because it requires contradiction or discovering inconsistency) and note in the `reason` that it may be unprovable.
+
+---
+
+####below are your task
+### Lemma statement (Isabelle)
+{{user provide}}
+
+Please output **only** one JSON object as specified above, with no markdown fences and no additional explanation.

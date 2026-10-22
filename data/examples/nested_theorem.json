@@ -1,0 +1,12 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_concat_property",
+  "function names": ["prefix"],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_concat_property: \"prefix xs ys \\<Longrightarrow> prefix (xs @ zs) (ys @ zs)\""
+}
+

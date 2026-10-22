@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "size_decrease",
+  "function names": ["size","isempty","pop"],
+  "other formal":"typedef (overloaded) 'a bstack =\n \"{xs :: ('a list \\<times> nat). length (fst xs) \\<le> snd xs}\"\n morphisms alist_of Abs_bstack\nproof -\n have \"([],0) \\<in> {xs. length (fst xs) \\<le> snd xs}\" by simp\n thus ?thesis by blast\nqed",
+  "other rules": ["alist_of_inverse", "alist_of", "Abs_bstack_inverse", "Abs_bstack_inject"],
+  "formal function definitions": {
+    "size": "definition size :: \"'a bstack \\<Rightarrow> nat\"\nwhere \"size s \\<equiv> length (fst (alist_of s))\"",
+    "isempty": "definition isempty :: \"'a bstack \\<Rightarrow> bool\"\nwhere \"isempty s \\<equiv> fst (alist_of s) = []\"",
+    "pop": "definition pop :: \"'a bstack \\<Rightarrow> ('a option \\<times> 'a bstack)\"\nwhere \"pop s \\<equiv> \n(if \\<not> isempty s then \n (Some (hd (fst (alist_of s))), Abs_bstack (tl (fst (alist_of s)), snd (alist_of s))) \n else (None, s))\""
+  },
+  "formal theorem statement": "theorem size_decrease:\n  assumes a1:\"\\<not> isempty s\" \n    shows \"size (snd (pop s)) = size s - 1\""
+}

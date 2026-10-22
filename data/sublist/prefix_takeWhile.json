@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_takeWhile",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_takeWhile:\n  assumes \"prefix xs ys\"\n  shows \"prefix (takeWhile P xs) (takeWhile P ys)\""
+}

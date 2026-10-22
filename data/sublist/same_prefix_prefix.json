@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "same_prefix_prefix",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem same_prefix_prefix [simp]: \"prefix (xs @ ys) (xs @ zs) = prefix ys zs\""
+}

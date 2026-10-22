@@ -1,0 +1,14 @@
+{
+  "packages": "Main",
+  "theorem name": "deqall_expand_rev",
+  "function names": ["dequeue","enqueue","listenq","deq2list"],
+  "other formal": "\ntype_synonym 'a queue = \"'a list\"\n",
+  "other rules": ["deq2list.induct", "listenq.induct"],
+  "formal function definitions": {
+    "enqueue":"fun enqueue :: \"'a queue \\<Rightarrow> 'a \\<Rightarrow> 'a queue\" \nwhere \"enqueue xs x = x # xs\"",
+    "dequeue": "fun dequeue :: \"'a queue \\<Rightarrow> ('a \\<times> 'a queue)\" \nwhere \"dequeue xs = (last xs, butlast xs)\"",
+    "deq2list": "fun deq2list :: \"'a queue \\<Rightarrow> 'a list \\<Rightarrow> 'a list\" where\n  \"deq2list [] lst = lst\"|\n  \"deq2list q lst = \n      (let (x, xq) = dequeue(q) in \n        (deq2list xq (x # lst)))\"",
+    "listenq":"fun listenq :: \"'a queue \\<Rightarrow> 'a list \\<Rightarrow> 'a queue\" where\n  \"listenq q [] = q\" |\n  \"listenq q (x # xs) = listenq (enqueue q x) xs\""
+  },
+  "formal theorem statement":"theorem deqall_expand_rev: \"deq2list (listenq [] xs) [] = rev xs\""
+}

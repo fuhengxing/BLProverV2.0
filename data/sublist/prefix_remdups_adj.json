@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefix_remdups_adj",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefix_remdups_adj:\n  assumes \"prefix xs ys\"\n  shows \"prefix (remdups_adj xs) (remdups_adj ys)\""
+}

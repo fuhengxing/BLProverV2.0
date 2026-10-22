@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "size1_mirror",
+  "function names": [
+    "mirror",
+    "size1"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size1": "fun size1 :: \"'a tree ⇒ nat\" where\n  \"size1 Leaf = 1\" |\n  \"size1 (Node (l) (x) (r)) = size1 l + size1 r\"",
+    "mirror": "fun mirror :: \"'a tree ⇒ 'a tree\" where\n  \"mirror Leaf = Leaf\" |\n  \"mirror (Node (l) (x) (r)) = (Node (mirror r) (x) (mirror l))\""
+  },
+  "formal theorem statement": "theorem size1_mirror[simp]: \"size1 (mirror t) = size1 t\""
+}

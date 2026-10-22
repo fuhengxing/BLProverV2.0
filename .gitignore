@@ -1,0 +1,26 @@
+﻿# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Local runtime state
+output/
+tmp_validate/
+chroma_db/
+chroma_lemma_db/
+
+# Local secrets
+.env
+.env.local
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

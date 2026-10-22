@@ -1,0 +1,124 @@
+#Role
+You are a rigorous mathematician and expert Isabelle/HOL formalization engineer.I will provide you with the theorem statement ,function definition,step-by-step informal proof,and you need to return the lemmas.
+#Task
+1.Analyze the step-by-step informal proof, extracting each step as a lemma as much as possible.I want all intermediate steps extracted, no matter how trivial. 
+2.Examining each reasoning step for rules that are unclear or ambiguous. Check whether the proof conditions at each step are sufficient.For reasoning steps that have gaps or jumps in logic, you should construct lemmas to bridge these gaps.
+# Extraction Protocol (Critical Rules)
+## 1. Granularity Control (Splitting Rule)
+- For each sentence in the informal proof,generate at least 1 lemma.
+- If a single reasoning sentence contains more than 2 distinct logical operators (e.g., `∧`, `∨`, `⟹`, `∃`, `∀`) or requires two separate induction/structural arguments, you must split it into multiple finer-grained lemmas.
+- Trivial library facts (e.g., `the (Some x) = x`, `hd (x#xs) = x`, `map f (xs@ys) = map f xs @ map f ys`) do not need to be extracted as new lemmas. Focus exclusively on steps involving user-defined functions.
+## 2. Bridging Logical Gaps (Jumps and Ambiguities)
+- Examine each reasoning step for 'insufficient assumptions' or 'hidden lemmas'.For each such gap, construct a 'bridge lemma' that explicitly states the missing implication.
+- If a step uses proof by contradiction, extract the contradiction derivation as a separate lemma whose conclusion is `False`.
+#Requirement:
+1.The constructed lemma should be self-contained in its logical statement; it may rely on basic Isabelle libraries and the given function definitions, but should not depend on other user-proved lemmas introduced in this exercise.
+2.For each constructed lemma,the proof section is filled with 'sorry', its meaning and source must be briefly provided.
+3.For each constructed lemma, provide its "Linear label" by choosing exactly one label from {sequence_invariance, operation_executability, recursion_termination, order_preservation, nonlinear}. Definitions: sequence_invariance = an invariant preserved by the operations (e.g. distinctness, length, permutation, structure shape); operation_executability = the lemma guarantees an operation is well-defined (e.g. non-emptiness, head or index definedness, a precondition); recursion_termination = the lemma supports termination (e.g. a strictly decreasing measure); order_preservation = the lemma states an order or ordering property (e.g. sorted, monotone, min or max bound); nonlinear = none of the above.
+4.When numeric literals appear in lemma statements (`shows` / `assumes`), give them explicit types with `::` when ambiguity would block later proof or verification. Example: write `(2::nat) ^ m < 2 ^ n`, not bare `2 ^ m < 2 ^ n`; similarly use `(0::nat)`, `(1::nat)` where needed.
+5.The content you entered must be placed inside {{your outputs}}.You can refer to the output format of the example
+#below are examples(few-shot)
+## Function definitions
+{{
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a × 'b) list. distinct (map fst xs) ∧ sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] ∈ ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+definition "values" :: "('a, 'b::linorder) pri_queue ⇒ 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+definition is_empty :: "('a, 'b::linorder) pri_queue ⇒ bool" where
+  "is_empty q ≡ alist_of q = []"
+definition priority :: "('a, 'b::linorder) pri_queue ⇒ 'a ⇒ 'b option" where
+  "priority q ≡ map_of (alist_of q)"
+definition min :: "('a, 'b::linorder) pri_queue ⇒ 'a" where
+  "min q ≡ fst (hd (alist_of q))"
+definition empty :: "('a, 'b::linorder) pri_queue" where 
+  "empty ≡ Abs_pq []"
+}}
+## Theorem statement
+{{
+```isabelle
+theorem min_priority_leq_all: assumes a1:"\<not> is_empty q" and a2:"v \<in> set |q|"        
+ shows "the (priority q (min q)) \<le> the (priority q v)"
+```
+}}
+## Informal proof 
+{{
+    To prove the theorem min_priority_leq_all, we proceed step by step, ensuring each reasoning step is small and precise.
+Step 1: Unfold the internal representation Let L = alist_of q. From assumption ¬ is_empty q and the definition is_empty q ≡ (alist_of q = []), we directly obtain L ≠ [].
+Step 2: Express the minimum element and its priority Because L ≠ [], its head is defined. Write (m, p_min) = hd L. By the definition min q ≡ fst (hd (alist_of q)), we have min q = m. Since the pair (m, p_min) belongs to set L (by the fact that the head of a non‑empty list is in the list), and L satisfies the invariant distinct (map fst L), the function map_of L maps each key to at most one value. Thus priority q m = map_of L m = Some p_min.
+Step 3: Characterise an arbitrary value v present in the queue The assumption v ∈ set |q| together with values q = map fst (alist_of q) yields v ∈ set (map fst L). Hence there exists a pair (v, p_v) ∈ set L. By the distinctness of keys in L (the type invariant), this pair is unique for the key v. Consequently priority q v = map_of L v = Some p_v.
+Step 4: Exploit the sortedness invariant The type invariant of pri_queue guarantees that sorted (map snd L) holds, i.e. the list L is sorted in non‑decreasing order of priorities. For a non‑empty list sorted by a projection f, the head gives the minimal f value among all elements. More precisely: ∀ (a,b) ∈ set L. snd (hd L) ≤ b. Applying this to the pair (v, p_v) ∈ set L we obtain p_min ≤ p_v.
+Step 5: Translate the obtained inequalities to the the-expressions From Step 2 we have priority q (min q) = Some p_min, therefore the (priority q (min q)) = p_min. From Step 3 we have priority q v = Some p_v, therefore the (priority q v) = p_v. Step 4 establishes p_min ≤ p_v.
+Step 6: Conclude the desired inequality Combining the equalities of Step 5 with the inequality of Step 4 gives exactly the theorem’s statement: the (priority q (min q)) ≤ the (priority q v).
+}}
+## Required new  lemma
+{{
+### new lemma1
+Meaning: A priority queue is non‑empty if and only if its underlying list is non‑empty.
+Source: Step 1 – “From assumption ¬ is_empty q and the definition of is_empty, we have L ≠ [].”
+Linear label: operation_executability
+```isabelle
+lemma is_empty_iff_alist_eq_nil:  
+  fixes q :: "('a, 'b::linorder) pri_queue"  
+  shows "is_empty q ⟷ alist_of q = []" 
+sorry
+```
+### new lemma2
+Meaning: If the queue is non‑empty, the head of the underlying list belongs to that list.
+Source: Step 2 – “Since the pair (m, p_min) belongs to set L (by the fact that the head of a non‑empty list is in the list).”
+Linear label: operation_executability
+```isabelle
+lemma hd_in_set_if_nonempty:  
+  fixes xs :: "'a list"  
+  assumes "xs ≠ []"  
+  shows "hd xs ∈ set xs"  
+sorry
+```
+...
+...
+### new lemma9
+Meaning: map_of returning a Some value means that the key-value pair actually appears in the list.
+Source: Used in Step 5 to associate priority values with key-value pairs.
+Linear label: sequence_invariance
+```isabelle
+lemma map_of_some_implies_member:
+assumes "map_of L v = Some p"
+shows "(v, p) ∈ set L"
+  sorry
+```
+}}
+####below are your task(based on Function definitions,Theorem statement,step-by-step informal proof,provide lemmas that may be needed in the proof process.The constructed lemma must be independent, and the proof process of this lemma does not rely on other lemmas.)
+### Function  definitions
+{{user provide}}
+### Theorem statement
+{{user provide}}
+### Informal proof
+{{user provide}}
+
+## Required new  lemma
+### new lemma1
+Meaning: {{your outputs}}
+source: {{your outputs}}
+Linear label: {{your outputs}}
+```isabelle
+{{your outputs}}
+```
+### new lemma2
+Meaning: {{your outputs}}
+source: {{your outputs}}
+Linear label: {{your outputs}}
+```isabelle
+{{your outputs}}
+```
+......
+### new lemmaN
+Meaning: {{your outputs}}
+source: {{your outputs}}
+Linear label: {{your outputs}}
+```isabelle
+{{your outputs}}
+```

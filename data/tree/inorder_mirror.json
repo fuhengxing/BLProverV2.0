@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "inorder_mirror",
+  "function names": [
+    "mirror",
+    "inorder"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "inorder": "fun inorder :: \"'a tree ⇒ 'a list\" where\n  \"inorder Leaf = []\" |\n  \"inorder (Node (l) (x) (r)) = inorder l @ [x] @ inorder r\"",
+    "mirror": "fun mirror :: \"'a tree ⇒ 'a tree\" where\n  \"mirror Leaf = Leaf\" |\n  \"mirror (Node (l) (x) (r)) = (Node (mirror r) (x) (mirror l))\""
+  },
+  "formal theorem statement": "theorem inorder_mirror: \"inorder (mirror t) = rev (inorder t)\""
+}

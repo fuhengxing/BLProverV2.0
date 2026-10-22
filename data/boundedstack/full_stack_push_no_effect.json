@@ -1,0 +1,14 @@
+{
+	"packages": "Main",
+	"theorem name": "full_stack_push_no_effect",
+	"function names": ["capacity","size","isfull","push"],
+	"other formal": "\ntypedef (overloaded) 'a bstack =\n \"{xs :: ('a list \\<times> nat). length (fst xs) \\<le> snd xs}\"\n morphisms alist_of Abs_bstack\nproof -\n have \"([],0) \\<in> {xs. length (fst xs) \\<le> snd xs}\" by simp\n thus ?thesis by blast\nqed",
+	"other rules": ["alist_of_inverse", "alist_of", "Abs_bstack_inverse", "Abs_bstack_inject"],
+	"formal function definitions": {
+		"capacity":"definition capacity :: \"'a bstack \\<Rightarrow> nat\"\nwhere \"capacity s \\<equiv> snd (alist_of s)\"",
+		"size":"definition size :: \"'a bstack \\<Rightarrow> nat\"\nwhere \"size s \\<equiv> length (fst (alist_of s))\"",
+		"isfull":"definition isfull :: \"'a bstack \\<Rightarrow> bool\"\nwhere \"isfull s \\<equiv> size s = capacity s\"",
+		"push":"definition push :: \"'a \\<Rightarrow> 'a bstack \\<Rightarrow> 'a bstack\"\nwhere \"push v s \\<equiv> \n(if \\<not>isfull s then \n Abs_bstack (v # fst (alist_of s), snd (alist_of s)) \n else s)\""
+	},
+	"formal theorem statement": "theorem full_stack_push_no_effect:\n  assumes a1:\"isfull s\"\n  shows \"push x s = s\""
+}

@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "prefixI",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem prefixI [intro?]: \"ys = xs @ zs \\<Longrightarrow> prefix xs ys\""
+}

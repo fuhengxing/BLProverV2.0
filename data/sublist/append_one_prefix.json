@@ -1,0 +1,13 @@
+{
+  "packages": "Main",
+  "theorem name": "append_one_prefix",
+  "function names": [
+    "prefix"
+  ],
+  "other formal": "",
+  "other rules": [],
+  "formal function definitions": {
+    "prefix": "definition prefix :: \"'a list \\<Rightarrow> 'a list \\<Rightarrow> bool\"\n  where \"prefix xs ys \\<longleftrightarrow> (\\<exists>zs. ys = xs @ zs)\""
+  },
+  "formal theorem statement": "theorem append_one_prefix:\n  \"prefix xs ys \\<Longrightarrow> length xs < length ys \\<Longrightarrow> prefix (xs @ [ys ! length xs]) ys\""
+}

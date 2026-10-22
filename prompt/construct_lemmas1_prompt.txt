@@ -1,0 +1,104 @@
+#Role
+You are a rigorous mathematician and expert Isabelle/HOL formalization engineer. I will provide you with the theorem statement and function definition, and you need to return the lemmas.
+#Task
+Analyze the properties that may be needed in the proof process of theorem statement, and extract these properties as lemmas.
+#Analysis protocol (follow step by step)
+When analyzing the given definitions and theorem, prioritize extracting intermediate lemmas from the following categories, but only if they are relevant to the given context:
+1.Data Structure Invariants (if typedef or constrained types are present): e.g., sortedness, distinctness, well-formedness constraints.
+2.Existence Properties (if the typedef invariant is non-trivially satisfiable): extract lemmas about the existence of representatives or the validity of constructor functions.
+3.Termination Dependencies (if recursive functions are defined): extract properties about decreasing measures or pattern-matching coverage.
+4.Algebraic Monotonicity (if the theorem involves order comparisons like ≤, <): extract monotonicity or transitivity properties involving the specific functions.
+Important: If a category is not applicable to the given code (e.g., no recursive functions, no typedef, no order comparisons), simply skip it. Do not invent irrelevant properties.
+#Requirement:
+1.The constructed lemma should be self-contained in its logical statement; it may rely on basic Isabelle libraries and the given function definitions, but should not depend on other user-proved lemmas introduced in this exercise.
+2.For each constructed lemma,the proof section is filled with 'sorry', its meaning and source must be briefly provided.
+3.For each constructed lemma, provide its "Linear label" by choosing exactly one label from {sequence_invariance, operation_executability, recursion_termination, order_preservation, nonlinear}. Definitions: sequence_invariance = an invariant preserved by the operations (e.g. distinctness, length, permutation, structure shape); operation_executability = the lemma guarantees an operation is well-defined (e.g. non-emptiness, head or index definedness, a precondition); recursion_termination = the lemma supports termination (e.g. a strictly decreasing measure); order_preservation = the lemma states an order or ordering property (e.g. sorted, monotone, min or max bound); nonlinear = none of the above.
+4.When numeric literals appear in lemma statements (`shows` / `assumes`), give them explicit types with `::` when ambiguity would block later proof or verification. Example: write `(2::nat) ^ m < 2 ^ n`, not bare `2 ^ m < 2 ^ n`; similarly use `(0::nat)`, `(1::nat)` where needed.
+5.The content you entered must be placed inside {{your outputs}}.You can refer to the output format of the example
+#below are examples(few-shot)
+## Function definitions
+{{
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a × 'b) list. distinct (map fst xs) ∧ sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] ∈ ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+definition "values" :: "('a, 'b::linorder) pri_queue ⇒ 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+definition is_empty :: "('a, 'b::linorder) pri_queue ⇒ bool" where
+  "is_empty q ≡ alist_of q = []"
+definition priority :: "('a, 'b::linorder) pri_queue ⇒ 'a ⇒ 'b option" where
+  "priority q ≡ map_of (alist_of q)"
+definition min :: "('a, 'b::linorder) pri_queue ⇒ 'a" where
+  "min q ≡ fst (hd (alist_of q))"
+definition empty :: "('a, 'b::linorder) pri_queue" where 
+  "empty ≡ Abs_pq []"
+}}
+## Theorem statement
+{{
+```isabelle
+theorem min_priority_leq_all: assumes a1:"\<not> is_empty q" and a2:"v \<in> set |q|"        
+ shows "the (priority q (min q)) \<le> the (priority q v)"
+```
+}}
+## Required new lemmas
+{{
+### new lemma1
+Meaning: In each priority queue, the key ('a) is unique, ensuring that map_of lookup results are unique
+Source: Constraints of typedef (overloaded) ('a, 'b::linorder) pri_queue
+Linear label: sequence_invariance
+```isabelle
+lemma alist_of_distinct: "distinct (map fst (alist_of q))"
+  sorry
+```
+### new lemma2
+Meaning: The underlying list is sorted by the second components (priorities).
+Source: the pri_queue typedef invariant sorted (map snd (alist_of q))
+Linear label: order_preservation
+```isabelle
+lemma pri_queue_sorted: "sorted (map snd (alist_of q))"
+sorry
+```
+...
+...
+### new lemma6
+Meaning: The priority of the underlying list is arranged in ascending order, so the first element has a priority ≤ the priority of any element. This is the key step in the inequality in the derivation theorem.
+Source: The classic properties of sorted in ascending order
+Linear label: order_preservation
+```isabelle
+lemma sorted_hd_min: 
+assumes "sorted (map snd xs)" and "xs ≠ []"
+shows "∀x ∈ set xs. snd (hd xs) ≤ snd x"
+  sorry
+```
+}}
+####below are your task(based on Function definitions,Theorem statement,Provide lemmas that may be needed in the proof process.The constructed lemma must be independent, and the proof process of this lemma does not rely on other lemmas.)
+### Function  definitions
+{{user provide}}
+### Theorem statement
+{{user provide}}
+## Required new  lemma
+### new lemma1
+Meaning: {{your outputs}}
+source: {{your outputs}}
+Linear label: {{your outputs}}
+```isabelle
+{{your outputs}}
+```
+### new lemma2
+Meaning: {{your outputs}}
+source: {{your outputs}}
+Linear label: {{your outputs}}
+```isabelle
+{{your outputs}}
+```
+......
+### new lemmaN
+Meaning: {{your outputs}}
+source: {{your outputs}}
+Linear label: {{your outputs}}
+```isabelle
+{{your outputs}}
+```

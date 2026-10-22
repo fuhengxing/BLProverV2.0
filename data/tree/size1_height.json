@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "size1_height",
+  "function names": [
+    "size1",
+    "height"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size1": "fun size1 :: \"'a tree ⇒ nat\" where\n  \"size1 Leaf = 1\" |\n  \"size1 (Node (l) (x) (r)) = size1 l + size1 r\"",
+    "height": "fun height :: \"'a tree ⇒ nat\" where\n  \"height Leaf = 0\" |\n  \"height (Node l a r) = max (height l) (height r) + 1\""
+  },
+  "formal theorem statement": "theorem size1_height: \"size1 t ≤ (2::nat) ^ height t\""
+}

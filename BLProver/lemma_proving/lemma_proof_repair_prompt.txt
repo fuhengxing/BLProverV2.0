@@ -1,0 +1,144 @@
+# Role
+
+You are an expert in Isabelle/HOL formal verification. A **previous lemma proof attempt failed** Isabelle checking. Your job is to **repair that proof** for the **same** lemma statement (same `lemma` header, `fixes`, `assumes`, `shows`) — not to prove the main theorem or change the goal.
+
+# Task
+
+You receive four inputs:
+
+1. **Function definitions** — types and definitions available in the theory.
+2. **Lemma (Previous failed proof)** — the lemma statement **plus** the proof script that failed (header and goal unchanged; only the proof body must be revised).
+3. **Proof strategy** — the prover’s earlier natural-language plan for that failed attempt (context only; do not copy it verbatim into the new proof).
+4. **Isabelle error feedback** — the checker output (undefined fact, failed subgoal, type error, etc.).
+
+Produce a **revised** proof that Isabelle accepts, and explain **what was wrong** and **how you fixed it**.
+
+- Do **not** change the lemma name, `fixes`, `assumes`, or `shows`.
+- Read the error and the failed script together; replace obsolete facts, fix case splits, or adjust `using` / `simp` as needed.
+
+# Rules
+
+- Output a **complete proof script** (replacing the failed body after `shows` / `assumes`), in the `### Lemma proof` section.
+- Prefer structured Isar (`proof` … `qed`); use `by` with automation when appropriate.
+- Do **not** use `sorry`, `oops`, or raw `sledgehammer` calls.
+- In **Repair strategy**, explain the failure cause and your fix in clear prose (not a paste of the Isabelle log).
+
+# Output format (strict)
+
+Respond with **exactly** these two markdown sections, in this order:
+
+### Lemma proof
+
+```isabelle
+<revised proof script only — e.g. proof (cases xs) … qed; do not repeat the lemma header>
+```
+
+### Repair strategy
+
+<What failed (e.g. undefined fact, wrong step), what you changed, and why the new proof should check — 2–6 sentences>
+
+Do not add extra sections. Do not wrap the whole answer in an outer markdown fence.
+
+---
+
+# Example
+
+**Input**
+
+### Function definitions
+
+typedef (overloaded) ('a, 'b::linorder) pri_queue =
+  "{xs :: ('a \<times> 'b) list. distinct (map fst xs) \<and> sorted (map snd xs)}"
+  morphisms alist_of Abs_pq
+proof -
+  have "[] \<in> ?pri_queue" by simp
+  then show ?thesis by blast
+qed
+
+definition "values" :: "('a, 'b::linorder) pri_queue \<Rightarrow> 'a list" ("|(_)|") where
+  "values q = map fst (alist_of q)"
+
+definition is_empty :: "('a, 'b::linorder) pri_queue \<Rightarrow> bool" where
+  "is_empty q \<equiv> alist_of q = []"
+
+definition priority :: "('a, 'b::linorder) pri_queue \<Rightarrow> 'a \<Rightarrow> 'b option" where
+  "priority q \<equiv> map_of (alist_of q)"
+
+definition min :: "('a, 'b::linorder) pri_queue \<Rightarrow> 'a" where
+  "min q \<equiv> fst (hd (alist_of q))"
+
+definition empty :: "('a, 'b::linorder) pri_queue" where
+  "empty \<equiv> Abs_pq []"
+
+### Lemma (Previous failed proof)
+
+lemma sorted_tl_map:
+  "sorted (map f xs) ⟹ sorted (map f (tl xs))"
+ proof (cases xs)
+  case Nil
+  then show ?thesis by simp
+next
+  case (Cons x xs')
+  assume "sorted (map f xs)"
+  with Cons have "sorted (map f (x # xs'))" by simp
+  hence "sorted (map f xs')" by (simp add: sorted_Cons)
+  with Cons show ?thesis by simp
+qed
+
+### Proof strategy
+Case analysis on xs. For the empty list tl [] = [], the result is trivial. For a non‑empty list x # xs', the assumption sorted (map f (x # xs')) implies sorted (map f xs') by sorted_Cons, and tl (x # xs') = xs'.
+
+### Isabelle error feedback
+
+have sorted (map f xs') 
+proof (state)
+this:
+  sorted (map f xs')
+
+goal (1 subgoal):
+ 1. ⋀a list. sorted (map f xs) ⟹ xs = a # list ⟹ sorted (map f (tl xs))
+Undefined fact: "sorted_Cons"
+
+
+**Output**
+
+### Lemma proof
+
+```isabelle
+proof (cases xs)
+  case Nil
+  then show ?thesis by simp
+next
+  case (Cons x xs')
+  assume "sorted (map f xs)"
+  with Cons have "sorted (map f (x # xs'))" by simp
+  then have "sorted (map f xs')" 
+    using sorted_simps(2) by force
+  with Cons show ?thesis by simp
+qed
+```
+
+### Repair strategy
+
+The original proof failed because it referenced `sorted_Cons`, a fact that is no longer available in current Isabelle (it has been superseded by more general simplification rules). The fix replaces the obsolete fact with the standard `sorted_simps(2)` rule, which defines `sorted` for a non-empty list as the conjunction of the tail being sorted and the head being less than or equal to every element in the tail. Alternatively, the entire proof can be simplified to a one-liner using `cases xs` followed by `simp_all`, as the simplifier now handles the sorting property automatically without needing an explicit fact name. This makes the proof both correct and more robust.
+---
+
+####below are your task
+
+Revise the proof for the following.
+
+### Function definitions
+
+{{}}
+
+### Lemma (Previous failed proof)
+
+{{}}
+
+### Proof strategy
+
+{{}}
+
+### Isabelle error feedback
+
+{{}}

@@ -1,0 +1,19 @@
+{
+  "packages": "Main",
+  "theorem name": "ipl_if_complete_int",
+  "function names": [
+    "ipl",
+    "complete",
+    "height",
+    "size"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "size": "primrec size :: \"'a tree ⇒ nat\" where \"size Leaf = 0\" | \"size (Node l x r) = size l + size r + 1\"",
+    "height": "fun height :: \"'a tree ⇒ nat\" where \"height Leaf = 0\" | \"height (Node l a r) = max (height l) (height r) + 1\"",
+    "complete": "fun complete :: \"'a tree ⇒ bool\" where \"complete Leaf = True\" | \"complete (Node l x r) = (height l = height r ∧ complete l ∧ complete r)\"",
+    "ipl": "fun ipl :: \"'a tree ⇒ nat\" where\n  \"ipl Leaf = 0\" |\n  \"ipl (Node l _ r) = ipl l + size l + ipl r + size r\""
+  },
+  "formal theorem statement": "theorem ipl_if_complete_int: \"complete t ⟹ int(ipl t) = (int(height t) - (2::nat)) * (2::nat)^(height t) + (2::nat)\""
+}

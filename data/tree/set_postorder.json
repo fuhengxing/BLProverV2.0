@@ -1,0 +1,15 @@
+{
+  "packages": "Main",
+  "theorem name": "set_postorder",
+  "function names": [
+    "postorder",
+    "set_tree"
+  ],
+  "other formal": "datatype 'a tree = Leaf | Node \"'a tree\" 'a \"'a tree\"",
+  "other rules": [],
+  "formal function definitions": {
+    "postorder": "fun postorder :: \"'a tree ⇒ 'a list\" where \"postorder Leaf = []\" | \"postorder (Node (l) (x) (r)) = postorder l @ postorder r @ [x]\"",
+    "set_tree": "fun set_tree :: \"'a tree ⇒ 'a set\" where \"set_tree Leaf = {}\" | \"set_tree (Node l a r) = {a} ∪ set_tree l ∪ set_tree r\""
+  },
+  "formal theorem statement": "theorem set_postorder[simp]: \"set (postorder t) = set_tree t\""
+}

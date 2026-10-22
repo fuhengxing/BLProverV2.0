@@ -1,0 +1,12 @@
+{
+  "packages": "Main",
+  "theorem name": "bounded_stack_bstack_valid",
+  "function names": ["size","capacity"],
+  "other formal":"typedef (overloaded) 'a bstack =\n \"{xs :: ('a list \\<times> nat). length (fst xs) \\<le> snd xs}\"\n morphisms alist_of Abs_bstack\nproof -\n have \"([],0) \\<in> {xs. length (fst xs) \\<le> snd xs}\" by simp\n thus ?thesis by blast\nqed",
+  "other rules": ["alist_of_inverse", "alist_of", "Abs_bstack_inverse", "Abs_bstack_inject"],
+  "formal function definitions": {
+    "capacity": "definition capacity :: \"'a bstack \\<Rightarrow> nat\"\nwhere \"capacity s \\<equiv> snd (alist_of s)\"",
+    "size": "definition size :: \"'a bstack \\<Rightarrow> nat\"\nwhere \"size s \\<equiv> length (fst (alist_of s))\""
+  },
+  "formal theorem statement": "theorem bounded_stack_bstack_valid: \"size s \\<le> capacity s\""
+}
